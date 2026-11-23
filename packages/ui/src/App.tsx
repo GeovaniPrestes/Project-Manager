@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import AppLayout from './layouts/AppLayout'
-import Dashboard from './pages/Dashboard'
+import Dashboard from './modules/dashboard/Dashboard'
 import Projects from './pages/Projects'
 
 function App() {
