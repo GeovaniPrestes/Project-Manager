@@ -5,6 +5,7 @@ import AppLayout from './AppLayout'
 import Dashboard from '../modules/dashboard/Dashboard'
 import Projects from '../modules/projects/Projects'
 import Commissions from '../modules/commissions/Commissions'
+import Tasks from '../modules/tasks/Tasks'
 
 import {
   APP_PAGES,
@@ -17,7 +18,8 @@ import type { ComponentType } from 'react'
 const PAGE_COMPONENTS: Partial<Record<AppPage, ComponentType>> = {
     [APP_PAGES.DASHBOARD]: Dashboard,
     [APP_PAGES.PROJECTS]: Projects,
-    [APP_PAGES.COMMISSIONS]: Commissions
+    [APP_PAGES.COMMISSIONS]: Commissions,
+    [APP_PAGES.TASKS]: Tasks
 }
 
 function App() {

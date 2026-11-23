@@ -27,6 +27,7 @@ class Task extends Model<
     declare completedAt: CreationOptional<Date | null>
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
+    declare deletedAt: CreationOptional<Date | null>
 }
 
 Task.init(
@@ -89,13 +90,20 @@ Task.init(
         updatedAt: {
             type: DataTypes.DATE,
             allowNull: false
+        },
+        deletedAt: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            defaultValue: null
         }
     },
     {
         sequelize: database,
         tableName: 'tasks',
-        timestamps: true
-    }
+        timestamps: true,
+        paranoid: true
+    },
+
 )
 
 export default Task
