@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 import {
     CalendarClock,
     Clock,
@@ -9,13 +11,42 @@ import StatCard from '../components/dashboard/StatCard'
 import ProjectProgress from '../components/dashboard/ProjectProgress'
 import '../styles/dashboard.css'
 
+type Project = Awaited<ReturnType<typeof window.projectApi.getAll>>[number]
+
 function Dashboard() {
+    const [projects, setProjects] = useState<Project[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        async function loadProjects() {
+            try {
+                const result = await window.projectApi.getAll()
+                setProjects(result)
+            } catch (error) {
+                console.error('Erro ao carregar projetos:', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        void loadProjects()
+    }, [])
+
+    const activeProjects = projects.filter(
+        project => project.status === 'active'
+    )
+
+    const plannedHours = projects.reduce(
+        (total, project) => total + project.weeklyGoal,
+        0
+    )
+
     return (
         <div className="dashboard">
             <section className="dashboard-stats">
                 <StatCard
                     title="Horas planejadas"
-                    value="30h"
+                    value={`${plannedHours}h`}
                     description="Meta semanal"
                     icon={CalendarClock}
                 />
@@ -29,7 +60,7 @@ function Dashboard() {
 
                 <StatCard
                     title="Projetos"
-                    value="5"
+                    value={String(projects.length)}
                     description="Projetos no planejamento"
                     icon={FolderKanban}
                 />
@@ -41,6 +72,7 @@ function Dashboard() {
                     icon={TrendingUp}
                 />
             </section>
+
             <section className="dashboard-projects">
                 <div className="dashboard-section-header">
                     <h2>Projetos em andamento</h2>
@@ -48,45 +80,22 @@ function Dashboard() {
                 </div>
 
                 <div className="project-progress-list">
-                    <ProjectProgress
-                        name="Azashi"
-                        category="Desenvolvimento de jogos"
-                        hours="10h / semana"
-                        progress={0}
-                        color="#6489ed"
-                    />
-
-                    <ProjectProgress
-                        name="Refazer TCC"
-                        category="Desenvolvimento acadêmico"
-                        hours="7h / semana"
-                        progress={0}
-                        color="#45a985"
-                    />
-
-                    <ProjectProgress
-                        name="Segundo jogo"
-                        category="Desenvolvimento de jogos"
-                        hours="5h / semana"
-                        progress={0}
-                        color="#b58ae8"
-                    />
-
-                    <ProjectProgress
-                        name="Desenho e Pixel Art"
-                        category="Prática artística"
-                        hours="4h / semana"
-                        progress={0}
-                        color="#d69b62"
-                    />
-
-                    <ProjectProgress
-                        name="Portfólio"
-                        category="Desenvolvimento web"
-                        hours="3h / semana"
-                        progress={0}
-                        color="#4ca9bd"
-                    />
+                    {loading ? (
+                        <p>Carregando projetos...</p>
+                    ) : activeProjects.length > 0 ? (
+                        activeProjects.map(project => (
+                            <ProjectProgress
+                                key={project.id}
+                                name={project.name}
+                                category={project.category ?? 'Sem categoria'}
+                                hours={`${project.weeklyGoal}h / semana`}
+                                progress={0}
+                                color={project.color}
+                            />
+                        ))
+                    ) : (
+                        <p>Nenhum projeto em andamento.</p>
+                    )}
                 </div>
             </section>
         </div>
