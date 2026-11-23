@@ -1,19 +1,27 @@
 import Project from '../database/models/Project.js'
 
-export async function getProjects() {
-    const projects = await Project.findAll({
-        order: [['createdAt', 'ASC']]
-    })
-
-    return projects.map(project => project.toJSON())
-}
-
 interface CreateProjectData {
     name: string
     description?: string | null
     category?: string | null
     color?: string
     weeklyGoal?: number
+}
+
+interface UpdateProjectData {
+    name: string
+    description?: string | null
+    category?: string | null
+    color?: string
+    weeklyGoal?: number
+}
+
+export async function getProjects() {
+    const projects = await Project.findAll({
+        order: [['createdAt', 'ASC']]
+    })
+
+    return projects.map(project => project.toJSON())
 }
 
 export async function createProject(data: CreateProjectData) {
@@ -27,14 +35,6 @@ export async function createProject(data: CreateProjectData) {
     })
 
     return project.toJSON()
-}
-
-interface UpdateProjectData {
-    name: string
-    description?: string | null
-    category?: string | null
-    color?: string
-    weeklyGoal?: number
 }
 
 export async function updateProject(
@@ -68,4 +68,19 @@ export async function deleteProject(id: number) {
     await project.destroy()
 
     return { success: true }
+}
+
+export async function updateProjectStatus(
+    id: number,
+    status: 'active' | 'paused' | 'completed'
+) {
+    const project = await Project.findByPk(id)
+
+    if (!project) {
+        throw new Error(`Projeto com ID ${id} não encontrado.`)
+    }
+
+    await project.update({ status })
+
+    return project.toJSON()
 }

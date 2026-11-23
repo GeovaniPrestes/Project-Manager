@@ -20,7 +20,12 @@ contextBridge.exposeInMainWorld('projectApi', {
 
     update: (id: number, data: CreateProjectData) =>
         ipcRenderer.invoke('projects:update', id, data),
-    
+
     delete: (id: number) =>
         ipcRenderer.invoke('projects:delete', id),
+
+    updateStatus: (
+        id: number,
+        status: 'active' | 'paused' | 'completed'
+    ) => ipcRenderer.invoke('projects:update-status', id, status),
 })

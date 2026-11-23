@@ -106,6 +106,23 @@ function Projects() {
         }
     }
 
+    async function handleUpdateProjectStatus(
+        id: number,
+        status: 'active' | 'paused' | 'completed'
+    ) {
+        try {
+            const updatedProject = await window.projectApi.updateStatus(id, status)
+
+            setProjects(current =>
+                current.map(project =>
+                    project.id === id ? updatedProject : project
+                )
+            )
+        } catch (error) {
+            console.error('Erro ao atualizar status do projeto:', error)
+        }
+    }
+
     return (
         <div className="projects-page">
             <div className="projects-toolbar">
@@ -205,6 +222,9 @@ function Projects() {
                             onDelete={() => {
                                 void handleDeleteProject(project.id, project.name)
                             }}
+                            onStatusChange={status => {
+                                void handleUpdateProjectStatus(project.id, status)
+                            }}  
                         />
                     ))}
                 </div>

@@ -6,6 +6,7 @@ interface ProjectCardProps {
     status: 'active' | 'paused' | 'completed'
     onEdit: () => void
     onDelete: () => void
+    onStatusChange: (status: 'active' | 'paused' | 'completed') => void
 }
 
 import { Pencil, Trash2 } from 'lucide-react'
@@ -23,7 +24,8 @@ function ProjectCard({
     color,
     status,
     onEdit,
-    onDelete
+    onDelete,
+    onStatusChange
 }: ProjectCardProps) {
     return (
         <article className="project-card">
@@ -40,9 +42,20 @@ function ProjectCard({
                     </div>
 
                     <div className="project-card-actions">
-                        <span className={`project-card-status ${status}`}>
-                            {statusLabels[status]}
-                        </span>
+                        <select
+                            className={`project-card-status-select ${status}`}
+                            value={status}
+                            onChange={event =>
+                                onStatusChange(
+                                    event.target.value as 'active' | 'paused' | 'completed'
+                                )
+                            }
+                            aria-label={`Status de ${name}`}
+                        >
+                            <option value="active">Em andamento</option>
+                            <option value="paused">Pausado</option>
+                            <option value="completed">Concluído</option>
+                        </select>
 
                         <button
                             type="button"

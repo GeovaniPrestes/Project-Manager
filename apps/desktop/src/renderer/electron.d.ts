@@ -58,6 +58,21 @@ declare global {
             delete: (id: number) => Promise<{
                 success: boolean
             }>
+
+            updateStatus: (
+                id: number,
+                status: 'active' | 'paused' | 'completed'
+            ) => Promise<{
+                id: number
+                name: string
+                description: string | null
+                category: string | null
+                color: string
+                weeklyGoal: number
+                status: 'active' | 'paused' | 'completed'
+                createdAt: Date
+                updatedAt: Date
+            }>
         }
     }
 }
