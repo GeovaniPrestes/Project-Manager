@@ -5,7 +5,7 @@ import {
     TrendingUp
 } from 'lucide-react'
 
-import StatCard from '../components/dashboard/statCard'
+import StatCard from '../components/dashboard/StatCard'
 import ProjectProgress from '../components/dashboard/ProjectProgress'
 import '../styles/dashboard.css'
 
