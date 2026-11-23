@@ -1,3 +1,4 @@
+
 import { app } from 'electron'
 import { Sequelize } from 'sequelize'
 import { join } from 'node:path'
@@ -10,5 +11,16 @@ export const databasePath = join(
 export const database = new Sequelize({
     dialect: 'sqlite',
     storage: databasePath,
-    logging: false
+    logging: false,
+    pool: {
+        max: 1,
+        min: 0,
+        idle: 10000
+    },
+    retry: {
+        max: 3
+    },
+    dialectOptions: {
+        busyTimeout: 5000
+    }
 })
