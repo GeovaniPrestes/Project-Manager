@@ -1,27 +1,25 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type {
-    CreateProjectData,
-    UpdateProjectData,
-    ProjectStatus
-} from '@project-manager/shared'
-import {    PROJECT_IPC_CHANNELS} from '@project-manager/shared'
+import type { ProjectApi } from '@project-manager/shared'
+import { PROJECT_IPC_CHANNELS } from '@project-manager/shared'
 
 contextBridge.exposeInMainWorld('appInfo', {
     platform: process.platform
 })
 
-contextBridge.exposeInMainWorld('projectApi', {
+const projectApi: ProjectApi = {
     getAll: () => ipcRenderer.invoke(PROJECT_IPC_CHANNELS.GET_ALL),
 
-    create: (data: CreateProjectData) =>
+    create: (data) =>
         ipcRenderer.invoke(PROJECT_IPC_CHANNELS.CREATE, data),
 
-    update: (id: number, data: UpdateProjectData) =>
+    update: (id, data) =>
         ipcRenderer.invoke(PROJECT_IPC_CHANNELS.UPDATE, id, data),
 
-    delete: (id: number) =>
+    delete: (id) =>
         ipcRenderer.invoke(PROJECT_IPC_CHANNELS.DELETE, id),
 
-    updateStatus: (id: number, status: ProjectStatus) =>
+    updateStatus: (id, status) =>
         ipcRenderer.invoke(PROJECT_IPC_CHANNELS.UPDATE_STATUS, id, status),
-})
+}
+
+contextBridge.exposeInMainWorld('projectApi', projectApi)
