@@ -5,5 +5,19 @@ declare global {
         appInfo: {
             platform: string
         }
+
+        projectApi: {
+            getAll: () => Promise<{
+                id: number
+                name: string
+                description: string | null
+                category: string | null
+                color: string
+                weeklyGoal: number
+                status: 'active' | 'paused' | 'completed'
+                createdAt: Date
+                updatedAt: Date
+            }[]>
+        }
     }
 }

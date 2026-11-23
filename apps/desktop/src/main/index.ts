@@ -1,5 +1,6 @@
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
+import { getProjects } from './services/ProjectService.js'
 import { join } from 'node:path'
 
 import { database } from './database/index.js'
@@ -51,6 +52,11 @@ app.whenReady().then(async () => {
         createWindow()
       }
     })
+
+    ipcMain.handle('projects:get-all', async () => {
+      return getProjects()
+    })
+
   } catch (error) {
     console.error('[Database] Falha ao inicializar o banco:', error)
     app.quit()
