@@ -14,6 +14,8 @@ import '../styles/layout.css'
 
 interface AppLayoutProps {
     children: React.ReactNode
+    currentPage: string
+    onNavigate: (page: string) => void
 }
 
 const navigation = [
@@ -25,7 +27,11 @@ const navigation = [
     { label: 'Relatórios', icon: ChartColumn }
 ]
 
-function AppLayout({ children }: AppLayoutProps) {
+function AppLayout({
+    children,
+    currentPage,
+    onNavigate
+}: AppLayoutProps) {
     return (
         <div className="app-layout">
             <aside className="sidebar">
@@ -38,14 +44,16 @@ function AppLayout({ children }: AppLayoutProps) {
                     <span className="sidebar-label">WORKSPACE</span>
 
                     <nav className="sidebar-navigation">
-                        {navigation.map(({ label, icon: Icon }, index) => (
-                            <div
+                        {navigation.map(({ label, icon: Icon }) => (
+                            <button
                                 key={label}
-                                className={`nav-item ${index === 0 ? 'active' : ''}`}
+                                type="button"
+                                className={`nav-item ${currentPage === label ? 'active' : ''}`}
+                                onClick={() => onNavigate(label)}
                             >
                                 <Icon size={19} strokeWidth={1.8} />
                                 <span>{label}</span>
-                            </div>
+                            </button>
                         ))}
                     </nav>
                 </div>
@@ -71,7 +79,7 @@ function AppLayout({ children }: AppLayoutProps) {
                     <div className="breadcrumb">
                         <span>Workspace</span>
                         <span className="breadcrumb-separator">/</span>
-                        <strong>Dashboard</strong>
+                        <strong>{currentPage}</strong>
                     </div>
 
                     <div className="topbar-actions">
