@@ -1,10 +1,20 @@
+
 import Project from '../modules/projects/database/Project.js'
+import Task from '../modules/tasks/database/Task.js'
 
 export function registerModels(): void {
-    // Registra as associações entre os modelos.
-    // Cada módulo poderá inicializar suas associações aqui.
+    Project.hasMany(Task, {
+        foreignKey: 'projectId',
+        as: 'tasks'
+    })
+
+    Task.belongsTo(Project, {
+        foreignKey: 'projectId',
+        as: 'project'
+    })
 }
 
 export {
-    Project
+    Project,
+    Task
 }
