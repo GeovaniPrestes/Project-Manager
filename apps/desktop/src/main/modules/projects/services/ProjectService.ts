@@ -21,6 +21,10 @@ export async function getProjects(
 }
 
 export async function createProject(data: CreateProjectData) {
+    validateProjectName(data.name)
+    validateWeeklyGoal(data.weeklyGoal)
+    validateProjectType(data.type)
+
     const project = await Project.create({
         name: data.name.trim(),
         description: data.description?.trim() || null,
@@ -31,22 +35,19 @@ export async function createProject(data: CreateProjectData) {
         status: 'active'
     })
 
-
-    validateProjectName(data.name)
-    validateWeeklyGoal(data.weeklyGoal)
-
     return project.toJSON()
 }
 
 export async function updateProject(id: number, data: UpdateProjectData) {
+    validateId(id)
+    validateProjectName(data.name)
+    validateWeeklyGoal(data.weeklyGoal)
+
     const project = await Project.findByPk(id)
 
     if (!project) {
         throw new Error(`Projeto com ID ${id} não encontrado.`)
     }
-
-    validateProjectName(data.name)
-    validateWeeklyGoal(data.weeklyGoal)
 
     await project.update({
         name: data.name.trim(),
@@ -60,12 +61,15 @@ export async function updateProject(id: number, data: UpdateProjectData) {
 }
 
 export async function deleteProject(id: number) {
+    validateId(id)
+
     const project = await Project.findByPk(id)
 
     if (!project) {
         throw new Error(`Projeto com ID ${id} não encontrado.`)
     }
 
+    // Exclusão lógica: preserva o registro e seu histórico no banco.
     await project.destroy()
 
     return { success: true }
@@ -75,6 +79,9 @@ export async function updateProjectStatus(
     id: number,
     status: ProjectStatus
 ) {
+    validateId(id)
+    validateProjectStatus(status)
+
     const project = await Project.findByPk(id)
 
     if (!project) {
@@ -86,8 +93,14 @@ export async function updateProjectStatus(
     return project.toJSON()
 }
 
+function validateId(id: number): void {
+    if (!Number.isInteger(id) || id <= 0) {
+        throw new Error('Identificador do projeto inválido.')
+    }
+}
+
 function validateProjectName(name: string): void {
-    if (!name.trim()) {
+    if (typeof name !== 'string' || !name.trim()) {
         throw new Error('O nome do projeto não pode ficar vazio.')
     }
 }
@@ -97,9 +110,29 @@ function validateWeeklyGoal(weeklyGoal?: number): void {
         return
     }
 
-    if (!Number.isFinite(weeklyGoal) || weeklyGoal < 0) {
+    if (
+        typeof weeklyGoal !== 'number' ||
+        !Number.isFinite(weeklyGoal) ||
+        weeklyGoal < 0
+    ) {
         throw new Error(
             'A meta semanal deve ser um número válido e não negativo.'
         )
+    }
+}
+
+function validateProjectType(type?: ProjectType): void {
+    if (type !== undefined && type !== 'personal' && type !== 'commission') {
+        throw new Error('Tipo de projeto inválido.')
+    }
+}
+
+function validateProjectStatus(status: ProjectStatus): void {
+    if (
+        status !== 'active' &&
+        status !== 'paused' &&
+        status !== 'completed'
+    ) {
+        throw new Error('Status do projeto inválido.')
     }
 }
