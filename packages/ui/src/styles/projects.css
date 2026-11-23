@@ -74,3 +74,112 @@
     font-size: 13px;
     line-height: 1.7;
 }
+
+
+/* Project Form */
+
+.project-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.project-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.project-form-field label {
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.project-form-field input,
+.project-form-field textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    background: var(--surface-color);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 13px;
+    transition: border-color 0.2s ease;
+}
+
+.project-form-field input:focus,
+.project-form-field textarea:focus {
+    border-color: #6489ed;
+}
+
+.project-form-field textarea {
+    resize: vertical;
+    min-height: 85px;
+}
+
+.project-form-field input[type="color"] {
+    width: 100%;
+    height: 41px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.project-form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.project-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.project-form-actions button {
+    padding: 10px 17px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.project-form-actions button[type="submit"] {
+    border-color: #6489ed;
+    background: #6489ed;
+    color: #ffffff;
+}
+
+.project-form-actions button:hover {
+    filter: brightness(1.1);
+}
+
+@media (max-width: 600px) {
+    .project-form-row {
+        flex-direction: column;
+    }
+}
+.projects-close-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.projects-close-button:hover {
+    background: var(--surface-color);
+    color: var(--text-primary);
+}
