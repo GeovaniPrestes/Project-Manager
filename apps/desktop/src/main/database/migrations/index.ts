@@ -8,5 +8,5 @@ export const migrations: Migration[] = [
     initialProjectsMigration,
     addProjectDeletedAtMigration,
     addProjectTypeMigration,
-    initialProjectsMigration
+    initialTasksMigration
 ]
