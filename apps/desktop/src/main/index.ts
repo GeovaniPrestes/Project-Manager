@@ -1,6 +1,6 @@
 
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { getProjects } from './services/ProjectService.js'
+import { getProjects, createProject } from './services/ProjectService.js'
 import { join } from 'node:path'
 
 import { database } from './database/index.js'
@@ -55,6 +55,10 @@ app.whenReady().then(async () => {
 
     ipcMain.handle('projects:get-all', async () => {
       return getProjects()
+    })
+
+    ipcMain.handle('projects:create', async (_event, data) => {
+      return createProject(data)
     })
 
   } catch (error) {
