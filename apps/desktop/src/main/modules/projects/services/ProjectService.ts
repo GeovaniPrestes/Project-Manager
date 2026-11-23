@@ -1,5 +1,5 @@
-import Project from '../database/models/Project.js'
-
+import Project from '../database/Project.js'
+    
 interface CreateProjectData {
     name: string
     description?: string | null

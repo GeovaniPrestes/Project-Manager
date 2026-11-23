@@ -1,6 +1,6 @@
 
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { getProjects, createProject, updateProject, deleteProject, updateProjectStatus } from './services/ProjectService.js'
+import { getProjects, createProject, updateProject, deleteProject, updateProjectStatus } from './modules/projects/services/ProjectService.js'
 import { join } from 'node:path'
 
 import { database } from './database/index.js'

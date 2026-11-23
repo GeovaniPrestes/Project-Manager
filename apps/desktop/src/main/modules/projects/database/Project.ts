@@ -6,11 +6,11 @@ import {
     type CreationOptional
 } from 'sequelize'
 
-import { database } from '../index.js'
+import { database } from '../../../database/index.js'
 
 class Project extends Model<
     InferAttributes<Project>,
-    InferCreationAttributes<Project>
+    InferCreationAttributes<Project>    
 > {
     declare id: CreationOptional<number>
     declare name: string
