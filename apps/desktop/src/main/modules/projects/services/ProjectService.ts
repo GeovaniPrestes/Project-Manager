@@ -6,8 +6,9 @@ import type {
     ProjectStatus
 } from '@project-manager/shared'
 
-export async function getProjects() {
+export async function getProjects(includeDeleted = false) {
     const projects = await Project.findAll({
+        paranoid: !includeDeleted,
         order: [['createdAt', 'ASC']]
     })
 

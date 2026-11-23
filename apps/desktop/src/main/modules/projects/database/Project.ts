@@ -81,5 +81,5 @@ Project.init(
         paranoid: true
     }
 )
-
+    
 export default Project
