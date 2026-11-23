@@ -6,9 +6,22 @@ import { resolve } from 'node:path'
 const root = process.cwd()
 const desktopSrc = resolve(root, 'apps/desktop/src')
 
+const sharedAlias = {
+    '@project-manager/shared': resolve(
+        root,
+        'packages/shared/src/index.ts'
+    )
+}
+
 export default defineConfig({
     main: {
+        resolve: {
+            alias: sharedAlias
+        },
         build: {
+            externalizeDeps: {
+                exclude: ['@project-manager/shared']
+            },
             rollupOptions: {
                 input: {
                     index: resolve(desktopSrc, 'main/index.ts')
@@ -18,7 +31,13 @@ export default defineConfig({
     },
 
     preload: {
+        resolve: {
+            alias: sharedAlias
+        },
         build: {
+            externalizeDeps: {
+                exclude: ['@project-manager/shared']
+            },
             rollupOptions: {
                 input: {
                     index: resolve(desktopSrc, 'preload/index.ts')
@@ -30,6 +49,9 @@ export default defineConfig({
     renderer: {
         root: resolve(desktopSrc, 'renderer'),
         plugins: [react()],
+        resolve: {
+            alias: sharedAlias
+        },
         build: {
             rollupOptions: {
                 input: {
