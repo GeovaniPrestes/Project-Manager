@@ -12,7 +12,7 @@ export function createMainWindow(): void {
         show: false,
         backgroundColor: '#111318',
         webPreferences: {
-            preload: join(currentDir, '../../preload/index.mjs'),
+            preload: join(__dirname, '../preload/index.mjs'),
             contextIsolation: true,
             nodeIntegration: false,
             sandbox: false
