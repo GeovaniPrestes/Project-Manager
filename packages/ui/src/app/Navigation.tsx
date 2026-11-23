@@ -1,10 +1,14 @@
 export const APP_PAGES = {
     DASHBOARD: 'Dashboard',
     PROJECTS: 'Projetos',
-    PLANNING: 'Planejamento',
-    SESSIONS: 'Sessões',
-    LIBRARY: 'Biblioteca',
-    REPORTS: 'Relatórios'
+    COMMISSIONS: 'Comissões',
+    TASKS: 'Tarefas',
+    TIMER: 'Cronômetro',
+    CALENDAR: 'Calendário',
+    PRODUCTIVITY: 'Produtividade',
+    BOOKS: 'Livros',
+    NOTIFICATIONS: 'Notificações',
+    SETTINGS: 'Configurações'
 } as const
 
 export type AppPage =
@@ -12,9 +16,13 @@ export type AppPage =
 
 export const PAGE_DESCRIPTIONS: Record<AppPage, string> = {
     Dashboard: 'Acompanhe seus projetos e atividades.',
-    Projetos: 'Gerencie e acompanhe seus projetos.',
-    Planejamento: 'Organize suas metas e atividades.',
-    Sessões: 'Acompanhe seu tempo de trabalho.',
-    Biblioteca: 'Organize seus materiais e referências.',
-    Relatórios: 'Analise seu desempenho e progresso.'
+    Projetos: 'Gerencie seus projetos pessoais.',
+    Comissões: 'Gerencie seus trabalhos e comissões.',
+    Tarefas: 'Organize suas tarefas e acompanhe seu progresso.',
+    Cronômetro: 'Registre suas sessões de foco e descanso.',
+    Calendário: 'Visualize sua agenda e seus compromissos.',
+    Produtividade: 'Analise seu desempenho e suas horas trabalhadas.',
+    Livros: 'Gerencie seus livros e integre o Obsidian.',
+    Notificações: 'Consulte seus avisos e lembretes.',
+    Configurações: 'Personalize o funcionamento do aplicativo.'
 }

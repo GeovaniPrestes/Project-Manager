@@ -1,16 +1,17 @@
 import {
     LayoutDashboard,
     FolderKanban,
+    BriefcaseBusiness,
+    ListTodo,
+    Timer,
     CalendarDays,
-    Clock3,
-    BookOpen,
     ChartColumn,
-    Settings,
-    Search,
+    BookOpen,
     Bell,
+    Search,
+    Settings,
     type LucideIcon
 } from 'lucide-react'
-
 import { APP_PAGES, type AppPage } from './Navigation'
 import './styles/layout.css'
 
@@ -23,11 +24,15 @@ interface AppLayoutProps {
 const navigation: { label: AppPage; icon: LucideIcon }[] = [
     { label: APP_PAGES.DASHBOARD, icon: LayoutDashboard },
     { label: APP_PAGES.PROJECTS, icon: FolderKanban },
-    { label: APP_PAGES.PLANNING, icon: CalendarDays },
-    { label: APP_PAGES.SESSIONS, icon: Clock3 },
-    { label: APP_PAGES.LIBRARY, icon: BookOpen },
-    { label: APP_PAGES.REPORTS, icon: ChartColumn }
-]
+    { label: APP_PAGES.COMMISSIONS, icon: BriefcaseBusiness },
+    { label: APP_PAGES.TASKS, icon: ListTodo },
+    { label: APP_PAGES.TIMER, icon: Timer },
+    { label: APP_PAGES.CALENDAR, icon: CalendarDays },
+    { label: APP_PAGES.PRODUCTIVITY, icon: ChartColumn },
+    { label: APP_PAGES.BOOKS, icon: BookOpen },
+    { label: APP_PAGES.NOTIFICATIONS, icon: Bell },
+    { label: APP_PAGES.SETTINGS, icon: Settings }
+]   
 
 function AppLayout({
     children,
