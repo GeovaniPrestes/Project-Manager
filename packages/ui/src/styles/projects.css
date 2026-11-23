@@ -290,3 +290,36 @@
     color: var(--text-primary);
     font-size: 13px;
 }
+
+/* Project Filters */
+
+.projects-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.projects-filters button {
+    padding: 8px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.projects-filters button:hover {
+    border-color: #6489ed;
+    color: var(--text-primary);
+}
+
+.projects-filters button.active {
+    border-color: #6489ed;
+    background: rgba(100, 137, 237, 0.12);
+    color: #6489ed;
+    font-weight: 600;
+}

@@ -6,11 +6,21 @@ import ProjectCard from '../components/projects/ProjectCard'
 import '../styles/projects.css'
 
 type Project = Awaited<ReturnType<typeof window.projectApi.getAll>>[number]
+type ProjectFilter = 'all' | 'active' | 'paused' | 'completed'
 
 function Projects() {
     const [projects, setProjects] = useState<Project[]>([])
     const [showForm, setShowForm] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [filter, setFilter] = useState<ProjectFilter>('all')
+
+    const filteredProjects = projects.filter(project => {
+        if (filter === 'all') {
+            return true
+        }
+
+        return project.status === filter
+    })
 
     useEffect(() => {
         async function loadProjects() {
@@ -47,6 +57,35 @@ function Projects() {
     return (
         <div className="projects-page">
             <div className="projects-toolbar">
+                <div className="projects-filters">
+                    <button
+                        className={filter === 'all' ? 'active' : ''}
+                        onClick={() => setFilter('all')}
+                    >
+                        Todos
+                    </button>
+
+                    <button
+                        className={filter === 'active' ? 'active' : ''}
+                        onClick={() => setFilter('active')}
+                    >
+                        Em andamento
+                    </button>
+
+                    <button
+                        className={filter === 'paused' ? 'active' : ''}
+                        onClick={() => setFilter('paused')}
+                    >
+                        Pausados
+                    </button>
+
+                    <button
+                        className={filter === 'completed' ? 'active' : ''}
+                        onClick={() => setFilter('completed')}
+                    >
+                        Concluídos
+                    </button>
+                </div>
                 <div>
                     <span className="projects-count">
                         {projects.length} projeto(s)
@@ -87,9 +126,9 @@ function Projects() {
 
             {loading ? (
                 <p>Carregando projetos...</p>
-            ) : projects.length > 0 ? (
+            ) : filteredProjects.length > 0 ? (
                 <div className="project-cards-grid">
-                    {projects.map(project => (
+                    {filteredProjects.map(project => (
                         <ProjectCard
                             key={project.id}
                             name={project.name}
@@ -100,29 +139,36 @@ function Projects() {
                         />
                     ))}
                 </div>
-            ) : !showForm ? (
+            ) : (
                 <div className="projects-empty-state">
                     <div className="projects-empty-icon">
                         <FolderKanban size={32} />
                     </div>
 
-                    <h2>Nenhum projeto cadastrado</h2>
+                    <h2>
+                        {projects.length === 0
+                            ? 'Nenhum projeto cadastrado'
+                            : 'Nenhum projeto encontrado'}
+                    </h2>
 
                     <p>
-                        Crie seu primeiro projeto para começar a organizar
-                        suas atividades e acompanhar seu progresso.
+                        {projects.length === 0
+                            ? 'Crie seu primeiro projeto para começar a organizar suas atividades.'
+                            : 'Não existem projetos com o status selecionado.'}
                     </p>
 
-                    <button
-                        type="button"
-                        className="projects-create-button"
-                        onClick={() => setShowForm(true)}
-                    >
-                        <Plus size={18} />
-                        <span>Criar primeiro projeto</span>
-                    </button>
+                    {projects.length === 0 && (
+                        <button
+                            type="button"
+                            className="projects-create-button"
+                            onClick={() => setShowForm(true)}
+                        >
+                            <Plus size={18} />
+                            <span>Criar primeiro projeto</span>
+                        </button>
+                    )}
                 </div>
-            ) : null}
+            )}
         </div>
     )
 }
