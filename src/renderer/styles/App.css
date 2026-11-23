@@ -1,0 +1,87 @@
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: #111318;
+  color: #f1f2f4;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.status-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 36px;
+  background: #191c23;
+  border: 1px solid #2b303b;
+  border-radius: 16px;
+}
+
+.status-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #173c2c;
+  color: #55d995;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+h1 {
+  margin: 24px 0 8px;
+  font-size: 26px;
+}
+
+.subtitle {
+  color: #969dab;
+  margin-bottom: 30px;
+}
+
+.status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #2b303b;
+  color: #b5bac5;
+}
+
+.status-item strong {
+  color: #55d995;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.version {
+  display: block;
+  margin-top: 26px;
+  color: #737b89;
+  font-size: 12px;
+}
+
+.page-heading h1 {
+  margin: 0;
+  color: #f1f3f6;
+  font-size: 24px;
+  font-weight: 650;
+}
+
+.page-heading p {
+  margin-top: 8px;
+  color: #8992a1;
+  font-size: 13px;
+}
