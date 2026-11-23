@@ -19,8 +19,5 @@ export const database = new Sequelize({
     },
     retry: {
         max: 3
-    },
-    dialectOptions: {
-        busyTimeout: 5000
     }
 })

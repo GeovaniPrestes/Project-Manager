@@ -10,6 +10,7 @@ export async function initializeDatabase(): Promise<void> {
         registerModels()
 
         await database.authenticate()
+        await database.query('PRAGMA busy_timeout = 5000')
         console.info('[Database] Conexão estabelecida com sucesso.')
 
         await initializeMigrationsTable()
