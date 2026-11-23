@@ -2,5 +2,6 @@ export type {
     ProjectType,
     ProjectStatus,
     CreateProjectData,
-    UpdateProjectData
+    UpdateProjectData,
+    ProjectData
 } from './types/project.js'

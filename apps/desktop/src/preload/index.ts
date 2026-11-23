@@ -1,5 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { CreateProjectData } from '@project-manager/shared'
+import type {
+    CreateProjectData,
+    UpdateProjectData,
+    ProjectStatus
+} from '@project-manager/shared'
 
 contextBridge.exposeInMainWorld('appInfo', {
     platform: process.platform
@@ -11,14 +15,12 @@ contextBridge.exposeInMainWorld('projectApi', {
     create: (data: CreateProjectData) =>
         ipcRenderer.invoke('projects:create', data),
 
-    update: (id: number, data: CreateProjectData) =>
+    update: (id: number, data: UpdateProjectData) =>
         ipcRenderer.invoke('projects:update', id, data),
 
     delete: (id: number) =>
         ipcRenderer.invoke('projects:delete', id),
 
-    updateStatus: (
-        id: number,
-        status: 'active' | 'paused' | 'completed'
-    ) => ipcRenderer.invoke('projects:update-status', id, status),
+    updateStatus: (id: number, status: ProjectStatus) =>
+        ipcRenderer.invoke('projects:update-status', id, status),
 })

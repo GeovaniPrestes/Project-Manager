@@ -1,3 +1,10 @@
+import type {
+    CreateProjectData,
+    UpdateProjectData,
+    ProjectStatus,
+    ProjectData
+} from '@project-manager/shared'
+
 export { }
 
 declare global {
@@ -7,72 +14,11 @@ declare global {
         }
 
         projectApi: {
-            getAll: () => Promise<{
-                id: number
-                name: string
-                description: string | null
-                category: string | null
-                color: string
-                weeklyGoal: number
-                status: 'active' | 'paused' | 'completed'
-                createdAt: Date
-                updatedAt: Date
-            }[]>
-
-            create: (data: {
-                name: string
-                description?: string | null
-                category?: string | null
-                color?: string
-                weeklyGoal?: number
-            }) => Promise<{
-                id: number
-                name: string
-                description: string | null
-                category: string | null
-                color: string
-                weeklyGoal: number
-                status: 'active' | 'paused' | 'completed'
-                createdAt: Date
-                updatedAt: Date
-            }>
-
-            update: (id: number, data: {
-                name: string
-                description?: string | null
-                category?: string | null
-                color?: string
-                weeklyGoal?: number
-            }) => Promise<{
-                id: number
-                name: string
-                description: string | null
-                category: string | null
-                color: string
-                weeklyGoal: number
-                status: 'active' | 'paused' | 'completed'
-                createdAt: Date
-                updatedAt: Date
-            }>
-
-            delete: (id: number) => Promise<{
-                success: boolean
-            }>
-
-            updateStatus: (
-                id: number,
-                status: 'active' | 'paused' | 'completed'
-            ) => Promise<{
-                id: number
-                name: string
-                description: string | null
-                category: string | null
-                color: string
-                weeklyGoal: number
-                status: 'active' | 'paused' | 'completed'
-                createdAt: Date
-                updatedAt: Date
-            }>
+            getAll: () => Promise<ProjectData[]>
+            create: (data: CreateProjectData) => Promise<ProjectData>
+            update: (id: number, data: UpdateProjectData) => Promise<ProjectData>
+            delete: (id: number) => Promise<{ success: boolean }>
+            updateStatus: (id: number, status: ProjectStatus) => Promise<ProjectData>
         }
     }
 }
