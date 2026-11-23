@@ -183,3 +183,17 @@
 .page-content {
     padding: 32px;
 }
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    padding: 32px;
+    border: 1px dashed #303642;
+    border-radius: 12px;
+    background: #171a21;
+    color: #8992a1;
+    font-size: 13px;
+    text-align: center;
+}
