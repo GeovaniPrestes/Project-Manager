@@ -2,7 +2,7 @@ import { app } from 'electron'
 import { Sequelize } from 'sequelize'
 import { join } from 'node:path'
 
-const databasePath = join(
+export const databasePath = join(
     app.getPath('userData'),
     'project-manager.sqlite'
 )

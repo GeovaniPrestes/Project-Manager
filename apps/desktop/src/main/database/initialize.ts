@@ -1,10 +1,18 @@
 import { database } from './connection.js'
-import './models.js'
+import { registerModels } from './models.js'
+import {
+    initializeMigrationsTable,
+    runMigrations
+} from './migrations/runner.js'
 
 export async function initializeDatabase(): Promise<void> {
+    registerModels()
+
     await database.authenticate()
     console.info('[Database] Conexão estabelecida com sucesso.')
 
-    await database.sync()
-    console.info('[Database] Modelos sincronizados com sucesso.')
+    await initializeMigrationsTable()
+    await runMigrations()
+
+    console.info('[Database] Migrations concluídas com sucesso.')
 }

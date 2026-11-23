@@ -6,6 +6,7 @@ import {
     type CreationOptional
 } from 'sequelize'
 
+import type { ProjectStatus } from '@project-manager/shared'
 import { database } from '../../../database/connection.js'
 
 class Project extends Model<
@@ -18,7 +19,7 @@ class Project extends Model<
     declare category: CreationOptional<string | null>
     declare color: CreationOptional<string>
     declare weeklyGoal: CreationOptional<number>
-    declare status: CreationOptional<'active' | 'paused' | 'completed'>
+    declare status: CreationOptional<ProjectStatus>
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
 }
