@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-import AppLayout from './layouts/AppLayout'
-import Dashboard from './modules/dashboard/Dashboard'
-import Projects from './modules/projects/Projects'
+import AppLayout from '../layouts/AppLayout'
+import Dashboard from '../modules/dashboard/Dashboard'
+import Projects from '../modules/projects/Projects' 
 
 function App() {
   const [currentPage, setCurrentPage] = useState('Dashboard')
