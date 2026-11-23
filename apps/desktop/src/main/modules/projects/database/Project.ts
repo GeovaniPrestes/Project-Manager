@@ -11,7 +11,7 @@ import { database } from '../../../database/connection.js'
 
 class Project extends Model<
     InferAttributes<Project>,
-    InferCreationAttributes<Project>    
+    InferCreationAttributes<Project>
 > {
     declare id: CreationOptional<number>
     declare name: string
@@ -22,6 +22,7 @@ class Project extends Model<
     declare status: CreationOptional<ProjectStatus>
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
+    declare deletedAt: CreationOptional<Date | null>
 }
 
 Project.init(
@@ -60,13 +61,24 @@ Project.init(
             allowNull: false,
             defaultValue: 'active'
         },
-        createdAt: DataTypes.DATE,
-        updatedAt: DataTypes.DATE
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        deletedAt: {
+            type: DataTypes.DATE,
+            allowNull: true
+        }
     },
     {
         sequelize: database,
         tableName: 'projects',
-        timestamps: true
+        timestamps: true,
+        paranoid: true
     }
 )
 

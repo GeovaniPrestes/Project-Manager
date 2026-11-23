@@ -1,20 +1,10 @@
 import Project from '../database/Project.js'
-    
-interface CreateProjectData {
-    name: string
-    description?: string | null
-    category?: string | null
-    color?: string
-    weeklyGoal?: number
-}
 
-interface UpdateProjectData {
-    name: string
-    description?: string | null
-    category?: string | null
-    color?: string
-    weeklyGoal?: number
-}
+import type {
+    CreateProjectData,
+    UpdateProjectData,
+    ProjectStatus
+} from '@project-manager/shared'
 
 export async function getProjects() {
     const projects = await Project.findAll({
@@ -34,18 +24,22 @@ export async function createProject(data: CreateProjectData) {
         status: 'active'
     })
 
+
+    validateProjectName(data.name)
+    validateWeeklyGoal(data.weeklyGoal)
+
     return project.toJSON()
 }
 
-export async function updateProject(
-    id: number,
-    data: UpdateProjectData
-) {
+export async function updateProject(id: number, data: UpdateProjectData) {
     const project = await Project.findByPk(id)
 
     if (!project) {
         throw new Error(`Projeto com ID ${id} não encontrado.`)
     }
+
+    validateProjectName(data.name)
+    validateWeeklyGoal(data.weeklyGoal)
 
     await project.update({
         name: data.name.trim(),
@@ -72,7 +66,7 @@ export async function deleteProject(id: number) {
 
 export async function updateProjectStatus(
     id: number,
-    status: 'active' | 'paused' | 'completed'
+    status: ProjectStatus
 ) {
     const project = await Project.findByPk(id)
 
@@ -83,4 +77,22 @@ export async function updateProjectStatus(
     await project.update({ status })
 
     return project.toJSON()
+}
+
+function validateProjectName(name: string): void {
+    if (!name.trim()) {
+        throw new Error('O nome do projeto não pode ficar vazio.')
+    }
+}
+
+function validateWeeklyGoal(weeklyGoal?: number): void {
+    if (weeklyGoal === undefined) {
+        return
+    }
+
+    if (!Number.isFinite(weeklyGoal) || weeklyGoal < 0) {
+        throw new Error(
+            'A meta semanal deve ser um número válido e não negativo.'
+        )
+    }
 }
