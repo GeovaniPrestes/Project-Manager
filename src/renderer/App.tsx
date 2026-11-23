@@ -1,5 +1,5 @@
-
 import AppLayout from './layouts/AppLayout'
+import Dashboard from './pages/Dashboard'
 
 function App() {
   return (
@@ -10,6 +10,8 @@ function App() {
           <p>Acompanhe seus projetos e atividades.</p>
         </div>
       </div>
+
+      <Dashboard />
     </AppLayout>
   )
 }
