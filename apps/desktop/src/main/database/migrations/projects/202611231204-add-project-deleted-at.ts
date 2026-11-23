@@ -1,6 +1,6 @@
 
 import { DataTypes } from 'sequelize'
-import type { Migration } from './types.js'
+import type { Migration } from '../types.js'
 
 export const addProjectDeletedAtMigration: Migration = {
     name: '202611231204-add-project-deleted-at',

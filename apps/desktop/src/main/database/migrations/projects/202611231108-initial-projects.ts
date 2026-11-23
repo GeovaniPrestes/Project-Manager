@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize'
-import type { Migration } from './types.js'
+import type { Migration } from '../types.js'
 
 export const initialProjectsMigration: Migration = {
     name: '202611231108-initial-projects',
