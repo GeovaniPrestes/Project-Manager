@@ -1,10 +1,11 @@
-import { app, BrowserWindow } from 'electron'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { createDatabase } from './database/index.js'
 
-const currentDir = dirname(fileURLToPath(import.meta.url))
-const database = createDatabase()
+import { app, BrowserWindow } from 'electron'
+import { join } from 'node:path'
+
+import { database } from './database/index.js'
+import './database/models/index.js'
+
+const currentDir = import.meta.dirname
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -38,8 +39,10 @@ function createWindow(): void {
 app.whenReady().then(async () => {
   try {
     await database.authenticate()
-
     console.info('[Database] Conexão estabelecida com sucesso.')
+
+    await database.sync()
+    console.info('[Database] Modelos sincronizados com sucesso.')
 
     createWindow()
 
