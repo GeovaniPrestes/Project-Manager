@@ -1,14 +1,18 @@
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type DragEvent } from 'react'
 import {
     FolderKanban,
     BriefcaseBusiness,
-    ListTodo
+    ListTodo,
+    Plus,
+    Pencil,
+    Trash2
 } from 'lucide-react'
 
 import type {
     ProjectType,
-    TaskStatus
+    TaskStatus,
+    TaskPriority
 } from '@project-manager/shared'
 
 import '../../app/styles/tasks.css'
@@ -42,6 +46,16 @@ function Tasks() {
     const [loading, setLoading] = useState(true)
     const [loadingTasks, setLoadingTasks] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [showTaskForm, setShowTaskForm] = useState(false)
+    const [taskTitle, setTaskTitle] = useState('')
+    const [taskDescription, setTaskDescription] = useState('')
+    const [taskPriority, setTaskPriority] = useState<TaskPriority>('medium')
+    const [taskDueDate, setTaskDueDate] = useState('')
+    const [savingTask, setSavingTask] = useState(false)
+    const [draggedTask, setDraggedTask] = useState<Task | null>(null)
+    const [dragOverColumn, setDragOverColumn] = useState<TaskStatus | null>(null)
+    const [editingTask, setEditingTask] = useState<Task | null>(null)
+    const [deletingTask, setDeletingTask] = useState(false)
 
     const personalProjects = projects.filter(
         project => project.type === 'personal'
@@ -106,6 +120,159 @@ function Tasks() {
         }
     }, [selectedProject?.id])
 
+    async function handleCreateTask(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+
+        if (!selectedProject || !taskTitle.trim()) {
+            return
+        }
+
+        setSavingTask(true)
+        setError(null)
+
+        const data = {
+            title: taskTitle.trim(),
+            description: taskDescription.trim() || null,
+            priority: taskPriority,
+            dueDate: taskDueDate
+                ? new Date(`${taskDueDate}T12:00:00`)
+                : null
+        }
+
+        try {
+            if (editingTask) {
+                const updatedTask = await window.taskApi.update(
+                    editingTask.id,
+                    data
+                )
+
+                setTasks(current =>
+                    current.map(task =>
+                        task.id === updatedTask.id ? updatedTask : task
+                    )
+                )
+            } else {
+                const newTask = await window.taskApi.create({
+                    projectId: selectedProject.id,
+                    ...data
+                })
+
+                setTasks(current => [...current, newTask])
+            }
+
+            setTaskTitle('')
+            setTaskDescription('')
+            setTaskPriority('medium')
+            setTaskDueDate('')
+            setEditingTask(null)
+            setShowTaskForm(false)
+        } catch (error) {
+            console.error('Erro ao salvar tarefa:', error)
+            setError('Não foi possível salvar a tarefa.')
+        } finally {
+            setSavingTask(false)
+        }
+    }
+
+    function handleDragStart(
+        event: DragEvent<HTMLDivElement>,
+        task: Task
+    ) {
+        setDraggedTask(task)
+
+        event.dataTransfer.effectAllowed = 'move'
+        event.dataTransfer.setData('text/plain', String(task.id))
+    }
+
+    function handleDragOver(
+        event: DragEvent<HTMLElement>,
+        status: TaskStatus
+    ) {
+        event.preventDefault()
+        event.dataTransfer.dropEffect = 'move'
+        setDragOverColumn(status)
+    }
+
+    async function handleDrop(
+        event: DragEvent<HTMLElement>,
+        status: TaskStatus
+    ) {
+        event.preventDefault()
+
+        const task = draggedTask
+
+        setDragOverColumn(null)
+        setDraggedTask(null)
+
+        if (!task || task.status === status) {
+            return
+        }
+
+        try {
+            const updatedTask = await window.taskApi.updateStatus(
+                task.id,
+                status
+            )
+
+            setTasks(current =>
+                current.map(item =>
+                    item.id === updatedTask.id
+                        ? updatedTask
+                        : item
+                )
+            )
+        } catch (error) {
+            console.error('Erro ao movimentar tarefa:', error)
+            setError('Não foi possível movimentar a tarefa.')
+        }
+    }
+
+    function handleEditTask(task: Task) {
+        setEditingTask(task)
+
+        setTaskTitle(task.title)
+        setTaskDescription(task.description ?? '')
+        setTaskPriority(task.priority)
+
+        setTaskDueDate(
+            task.dueDate
+                ? new Date(task.dueDate).toISOString().slice(0, 10)
+                : ''
+        )
+
+        setShowTaskForm(true)
+    }
+
+    async function handleDeleteTask(task: Task) {
+        const confirmed = window.confirm(
+            `Deseja realmente excluir a tarefa "${task.title}"?`
+        )
+
+        if (!confirmed) {
+            return
+        }
+
+        setDeletingTask(true)
+
+        try {
+            await window.taskApi.delete(task.id)
+
+            setTasks(current =>
+                current.filter(item => item.id !== task.id)
+            )
+
+            if (editingTask?.id === task.id) {
+                setEditingTask(null)
+                setShowTaskForm(false)
+            }
+        } catch (error) {
+            console.error('Erro ao excluir tarefa:', error)
+            setError('Não foi possível excluir a tarefa.')
+        } finally {
+            setDeletingTask(false)
+        }
+    }
+
     function renderProjectList(
         title: string,
         type: ProjectType,
@@ -128,11 +295,10 @@ function Tasks() {
                         <button
                             key={project.id}
                             type="button"
-                            className={`tasks-project-item ${
-                                selectedProject?.id === project.id
-                                    ? 'active'
-                                    : ''
-                            }`}
+                            className={`tasks-project-item ${selectedProject?.id === project.id
+                                ? 'active'
+                                : ''
+                                }`}
                             onClick={() => setSelectedProject(project)}
                         >
                             <span
@@ -206,7 +372,100 @@ function Tasks() {
                                     <p>{selectedProject.description}</p>
                                 )}
                             </div>
+
+                            <button
+                                type="button"
+                                className="tasks-create-button"
+                                onClick={() => setShowTaskForm(current => !current)}
+                            >
+                                <Plus size={18} />
+                                Nova tarefa
+                            </button>
                         </div>
+
+                        {showTaskForm && (
+                            <form
+                                className="tasks-create-form"
+                                onSubmit={handleCreateTask}
+                            >
+                                <h2>{editingTask ? 'Editar tarefa' : 'Nova tarefa'}</h2>
+                                <label>
+                                    Título
+                                    <input
+                                        type="text"
+                                        value={taskTitle}
+                                        onChange={event => setTaskTitle(event.target.value)}
+                                        placeholder="O que precisa ser feito?"
+                                        required
+                                        autoFocus
+                                    />
+                                </label>
+
+                                <label>
+                                    Descrição
+                                    <textarea
+                                        value={taskDescription}
+                                        onChange={event => setTaskDescription(event.target.value)}
+                                        placeholder="Detalhes da tarefa (opcional)"
+                                        rows={3}
+                                    />
+                                </label>
+
+                                <div className="tasks-form-row">
+                                    <label>
+                                        Prioridade
+                                        <select
+                                            value={taskPriority}
+                                            onChange={event =>
+                                                setTaskPriority(event.target.value as TaskPriority)
+                                            }
+                                        >
+                                            <option value="low">Baixa</option>
+                                            <option value="medium">Média</option>
+                                            <option value="high">Alta</option>
+                                            <option value="urgent">Urgente</option>
+                                        </select>
+                                    </label>
+
+                                    <label>
+                                        Prazo
+                                        <input
+                                            type="date"
+                                            value={taskDueDate}
+                                            onChange={event => setTaskDueDate(event.target.value)}
+                                        />
+                                    </label>
+                                </div>
+
+                                <div className="tasks-form-actions">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowTaskForm(false)
+                                            setEditingTask(null)
+                                            setTaskTitle('')
+                                            setTaskDescription('')
+                                            setTaskPriority('medium')
+                                            setTaskDueDate('')
+                                        }}
+                                        disabled={savingTask}
+                                    >
+                                        Cancelar
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        disabled={savingTask || !taskTitle.trim()}
+                                    >
+                                        {savingTask
+                                            ? 'Salvando...'
+                                            : editingTask
+                                                ? 'Salvar alterações'
+                                                : 'Criar tarefa'}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
 
                         {loadingTasks ? (
                             <p className="tasks-board-message">
@@ -222,7 +481,10 @@ function Tasks() {
                                     return (
                                         <section
                                             key={column.status}
-                                            className="tasks-kanban-column"
+                                            className={`tasks-kanban-column ${dragOverColumn === column.status ? 'drag-over' : ''
+                                                }`}
+                                            onDragOver={event => handleDragOver(event, column.status)}
+                                            onDrop={event => handleDrop(event, column.status)}
                                         >
                                             <div className="tasks-kanban-column-header">
                                                 <h2>{column.title}</h2>
@@ -231,12 +493,60 @@ function Tasks() {
 
                                             <div className="tasks-kanban-column-content">
                                                 {columnTasks.map(task => (
-                                                    <article
+                                                    <div
+                                                        className={`tasks-kanban-card ${draggedTask?.id === task.id ? 'dragging' : ''
+                                                            }`}
                                                         key={task.id}
-                                                        className="tasks-kanban-card"
+                                                        draggable
+                                                        onDragStart={event => handleDragStart(event, task)}
+                                                        onDragEnd={() => {
+                                                            setDraggedTask(null)
+                                                            setDragOverColumn(null)
+                                                        }}
                                                     >
-                                                        <h3>{task.title}</h3>
-                                                    </article>
+                                                        <div className="tasks-kanban-card-header">
+                                                            <strong className="tasks-kanban-card-title">
+                                                                {task.title}
+                                                            </strong>
+
+                                                            <div className="tasks-kanban-card-actions">
+                                                                <button
+                                                                    type="button"
+                                                                    title="Editar tarefa"
+                                                                    onClick={() => handleEditTask(task)}
+                                                                    onMouseDown={event => event.stopPropagation()}
+                                                                >
+                                                                    <Pencil size={14} />
+                                                                </button>
+
+                                                                <button
+                                                                    type="button"
+                                                                    title="Excluir tarefa"
+                                                                    disabled={deletingTask}
+                                                                    onClick={() => handleDeleteTask(task)}
+                                                                    onMouseDown={event => event.stopPropagation()}
+                                                                >
+                                                                    <Trash2 size={14} />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div className="tasks-kanban-card-meta">
+                                                            <span className={`tasks-priority priority-${task.priority}`}>
+                                                                {{
+                                                                    low: 'Baixa',
+                                                                    medium: 'Média',
+                                                                    high: 'Alta',
+                                                                    urgent: 'Urgente'
+                                                                }[task.priority]}
+                                                            </span>
+
+                                                            {task.dueDate && (
+                                                                <span className="tasks-due-date">
+                                                                    {new Date(task.dueDate).toLocaleDateString('pt-BR')}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 ))}
 
                                                 {columnTasks.length === 0 && (

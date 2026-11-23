@@ -275,3 +275,216 @@
     font-size: 11px;
     text-align: center;
 }
+
+.tasks-kanban-card-title {
+    display: block;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.tasks-kanban-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.tasks-priority {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 5px;
+}
+
+.priority-low {
+    background: #64748b22;
+    color: #94a3b8;
+}
+
+.priority-medium {
+    background: #3b82f622;
+    color: #60a5fa;
+}
+
+.priority-high {
+    background: #f59e0b22;
+    color: #f59e0b;
+}
+
+.priority-urgent {
+    background: #ef444422;
+    color: #ef4444;
+}
+
+.tasks-due-date {
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.tasks-content-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.tasks-create-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #6489ed;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.tasks-create-button:hover {
+    background: #5278dc;
+}
+
+.tasks-create-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--surface-color);
+}
+
+.tasks-create-form h2 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.tasks-create-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.tasks-create-form input,
+.tasks-create-form textarea,
+.tasks-create-form select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 7px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font: inherit;
+}
+
+.tasks-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.tasks-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.tasks-form-actions button {
+    padding: 9px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 7px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.tasks-form-actions button[type="submit"] {
+    border-color: #6489ed;
+    background: #6489ed;
+    color: white;
+}
+
+.tasks-form-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.tasks-kanban-card {
+    cursor: grab;
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.tasks-kanban-card:active {
+    cursor: grabbing;
+}
+
+.tasks-kanban-card.dragging {
+    opacity: 0.4;
+    transform: scale(0.97);
+}
+
+.tasks-kanban-column.drag-over .tasks-kanban-column-content {
+    background: rgba(100, 137, 237, 0.08);
+    outline: 2px dashed #6489ed;
+    outline-offset: -2px;
+    border-radius: 8px;
+}
+
+.tasks-kanban-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.tasks-kanban-card-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.tasks-kanban-card:hover .tasks-kanban-card-actions {
+    opacity: 1;
+}
+
+.tasks-kanban-card-actions button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.tasks-kanban-card-actions button:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.tasks-kanban-card-actions button:last-child:hover {
+    color: #ef4444;
+}
+
+.tasks-kanban-card-actions button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
