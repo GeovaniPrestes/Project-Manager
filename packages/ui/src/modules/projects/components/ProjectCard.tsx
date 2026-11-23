@@ -1,15 +1,16 @@
+import { Pencil, Trash2 } from 'lucide-react'
+
 interface ProjectCardProps {
     name: string
     category: string
     weeklyGoal: number
     color: string
     status: 'active' | 'paused' | 'completed'
+    entityLabel?: 'projeto' | 'comissão'
     onEdit: () => void
     onDelete: () => void
     onStatusChange: (status: 'active' | 'paused' | 'completed') => void
 }
-
-import { Pencil, Trash2 } from 'lucide-react'
 
 function ProjectCard({
     name,
@@ -17,10 +18,15 @@ function ProjectCard({
     weeklyGoal,
     color,
     status,
+    entityLabel = 'projeto',
     onEdit,
     onDelete,
     onStatusChange
 }: ProjectCardProps) {
+    const formattedGoal = Number.isInteger(weeklyGoal)
+        ? weeklyGoal.toString()
+        : weeklyGoal.toLocaleString('pt-BR')
+
     return (
         <article className="project-card">
             <div
@@ -56,16 +62,17 @@ function ProjectCard({
                             className="project-card-edit"
                             onClick={onEdit}
                             aria-label={`Editar ${name}`}
-                            title="Editar projeto"
+                            title={`Editar ${entityLabel}`}
                         >
                             <Pencil size={16} />
                         </button>
+
                         <button
                             type="button"
                             className="project-card-delete"
                             onClick={onDelete}
                             aria-label={`Excluir ${name}`}
-                            title="Excluir projeto"
+                            title={`Excluir ${entityLabel}`}
                         >
                             <Trash2 size={16} />
                         </button>
@@ -74,7 +81,9 @@ function ProjectCard({
 
                 <div className="project-card-footer">
                     <span>Meta semanal</span>
-                    <strong>{weeklyGoal}h</strong>
+                    <strong>
+                        {weeklyGoal > 0 ? `${formattedGoal}h` : 'Sem meta'}
+                    </strong>
                 </div>
             </div>
         </article>

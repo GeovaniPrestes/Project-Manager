@@ -176,7 +176,10 @@ function ProjectManager({
                 <button
                     type="button"
                     className="projects-create-button"
-                    onClick={() => setShowForm(true)}
+                    onClick={() => {
+                        setEditingProject(null)
+                        setShowForm(true)
+                    }}
                 >
                     <Plus size={18} />
                     <span>Novo projeto</span>
@@ -228,6 +231,7 @@ function ProjectManager({
                             weeklyGoal={project.weeklyGoal}
                             color={project.color}
                             status={project.status}
+                            entityLabel={entityLabel}
                             onEdit={() => {
                                 setEditingProject(project)
                                 setShowForm(true)
