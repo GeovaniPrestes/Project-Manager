@@ -22,9 +22,7 @@ function App() {
       <div className="page-heading">
         <div>
           <h1>{currentPage}</h1>
-          <p>
-            {PAGE_DESCRIPTIONS[currentPage] ?? 'Organize seu workspace.'}
-          </p>
+          <p>{PAGE_DESCRIPTIONS[currentPage]}</p>
         </div>
       </div>
 

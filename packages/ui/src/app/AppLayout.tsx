@@ -11,7 +11,7 @@ import {
     type LucideIcon
 } from 'lucide-react'
 
-import { type AppPage } from './Navigation'
+import { APP_PAGES, type AppPage } from './Navigation'
 import './styles/layout.css'
 
 interface AppLayoutProps {
@@ -21,12 +21,12 @@ interface AppLayoutProps {
 }
 
 const navigation: { label: AppPage; icon: LucideIcon }[] = [
-    { label: 'Dashboard', icon: LayoutDashboard },
-    { label: 'Projetos', icon: FolderKanban },
-    { label: 'Planejamento', icon: CalendarDays },
-    { label: 'Sessões', icon: Clock3 },
-    { label: 'Biblioteca', icon: BookOpen },
-    { label: 'Relatórios', icon: ChartColumn }
+    { label: APP_PAGES.DASHBOARD, icon: LayoutDashboard },
+    { label: APP_PAGES.PROJECTS, icon: FolderKanban },
+    { label: APP_PAGES.PLANNING, icon: CalendarDays },
+    { label: APP_PAGES.SESSIONS, icon: Clock3 },
+    { label: APP_PAGES.LIBRARY, icon: BookOpen },
+    { label: APP_PAGES.REPORTS, icon: ChartColumn }
 ]
 
 function AppLayout({
