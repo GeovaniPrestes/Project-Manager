@@ -1,11 +1,12 @@
-export type ProjectType = 'personal' | 'commission'
 
+export type ProjectType = 'personal' | 'commission'
 export type ProjectStatus = 'active' | 'paused' | 'completed'
 
 export interface CreateProjectData {
     name: string
     description?: string | null
     category?: string | null
+    type?: ProjectType
     color?: string
     weeklyGoal?: number
 }
@@ -23,6 +24,7 @@ export interface ProjectData {
     name: string
     description: string | null
     category: string | null
+    type: ProjectType
     color: string
     weeklyGoal: number
     status: ProjectStatus

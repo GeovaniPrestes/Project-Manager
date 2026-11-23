@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 interface ProjectFormProps {
+    entityLabel?: 'projeto' | 'comissão'
     initialData?: {
         id: number
         name: string
@@ -19,7 +20,7 @@ interface ProjectFormProps {
     }) => void
 }
 
-function ProjectForm({ initialData, onCancel, onSubmit }: ProjectFormProps) {
+function ProjectForm({ entityLabel = 'projeto', initialData, onCancel, onSubmit }: ProjectFormProps) {
     const [name, setName] = useState(initialData?.name ?? '')
     const [description, setDescription] = useState(initialData?.description ?? '')
     const [category, setCategory] = useState(initialData?.category ?? '')
@@ -46,8 +47,13 @@ function ProjectForm({ initialData, onCancel, onSubmit }: ProjectFormProps) {
 
     return (
         <form className="project-form" onSubmit={handleSubmit}>
+            <h2>
+                {entityLabel === 'projeto' ? 'Novo projeto' : 'Nova comissão'}
+            </h2>
             <div className="project-form-field">
-                <label htmlFor="project-name">Nome do projeto</label>
+                <label htmlFor="project-name">
+                    Nome {entityLabel === 'projeto' ? 'do projeto' : 'da comissão'}
+                </label>
                 <input
                     id="project-name"
                     type="text"
@@ -65,7 +71,11 @@ function ProjectForm({ initialData, onCancel, onSubmit }: ProjectFormProps) {
                     id="project-description"
                     value={description}
                     onChange={event => setDescription(event.target.value)}
-                    placeholder="Descreva seu projeto..."
+                    placeholder={
+                        entityLabel === 'projeto'
+                            ? 'Ex.: Desenvolvimento de jogo'
+                            : 'Ex.: Trabalho de design para cliente'
+                    }
                     rows={3}
                 />
             </div>
@@ -113,7 +123,7 @@ function ProjectForm({ initialData, onCancel, onSubmit }: ProjectFormProps) {
                 </button>
 
                 <button type="submit">
-                    {initialData ? 'Salvar alterações' : 'Criar projeto'}
+                    {initialData ? 'Salvar alterações' : `Criar ${entityLabel}`}
                 </button>
             </div>
         </form>

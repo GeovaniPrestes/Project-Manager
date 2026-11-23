@@ -10,7 +10,8 @@ contextBridge.exposeInMainWorld('appInfo', {
 })
 
 const projectApi: ProjectApi = {
-    getAll: () => ipcRenderer.invoke(PROJECT_IPC_CHANNELS.GET_ALL),
+    getAll: (type) =>
+        ipcRenderer.invoke(PROJECT_IPC_CHANNELS.GET_ALL, type),
 
     create: (data) =>
         ipcRenderer.invoke(PROJECT_IPC_CHANNELS.CREATE, data),

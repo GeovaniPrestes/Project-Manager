@@ -3,11 +3,16 @@ import Project from '../database/Project.js'
 import type {
     CreateProjectData,
     UpdateProjectData,
-    ProjectStatus
+    ProjectStatus,
+    ProjectType
 } from '@project-manager/shared'
 
-export async function getProjects(includeDeleted = false) {
+export async function getProjects(
+    type?: ProjectType,
+    includeDeleted = false
+) {
     const projects = await Project.findAll({
+        where: type ? { type } : undefined,
         paranoid: !includeDeleted,
         order: [['createdAt', 'ASC']]
     })
@@ -19,6 +24,7 @@ export async function createProject(data: CreateProjectData) {
     const project = await Project.create({
         name: data.name.trim(),
         description: data.description?.trim() || null,
+        type: data.type ?? 'personal',
         category: data.category?.trim() || null,
         color: data.color ?? '#6489ed',
         weeklyGoal: data.weeklyGoal ?? 0,

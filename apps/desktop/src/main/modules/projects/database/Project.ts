@@ -1,3 +1,4 @@
+
 import {
     DataTypes,
     Model,
@@ -6,7 +7,11 @@ import {
     type CreationOptional
 } from 'sequelize'
 
-import type { ProjectStatus } from '@project-manager/shared'
+import type {
+    ProjectStatus,
+    ProjectType
+} from '@project-manager/shared'
+
 import { database } from '../../../database/connection.js'
 
 class Project extends Model<
@@ -17,6 +22,7 @@ class Project extends Model<
     declare name: string
     declare description: CreationOptional<string | null>
     declare category: CreationOptional<string | null>
+    declare type: CreationOptional<ProjectType>
     declare color: CreationOptional<string>
     declare weeklyGoal: CreationOptional<number>
     declare status: CreationOptional<ProjectStatus>
@@ -45,6 +51,11 @@ Project.init(
             type: DataTypes.STRING,
             allowNull: true,
             defaultValue: null
+        },
+        type: {
+            type: DataTypes.ENUM('personal', 'commission'),
+            allowNull: false,
+            defaultValue: 'personal'
         },
         color: {
             type: DataTypes.STRING,
@@ -81,5 +92,5 @@ Project.init(
         paranoid: true
     }
 )
-    
+
 export default Project

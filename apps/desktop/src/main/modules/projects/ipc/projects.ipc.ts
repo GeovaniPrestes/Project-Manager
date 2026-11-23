@@ -4,7 +4,8 @@ import {
     PROJECT_IPC_CHANNELS,
     type CreateProjectData,
     type UpdateProjectData,
-    type ProjectStatus
+    type ProjectStatus,
+    type ProjectType
 } from '@project-manager/shared'
 
 import {
@@ -16,9 +17,12 @@ import {
 } from '../services/ProjectService.js'
 
 export function registerProjectsIpc(): void {
-    ipcMain.handle(PROJECT_IPC_CHANNELS.GET_ALL, async () => {
-        return getProjects()
-    })
+    ipcMain.handle(
+    PROJECT_IPC_CHANNELS.GET_ALL,
+    async (_event, type?: ProjectType) => {
+        return getProjects(type)
+    }
+)
 
     ipcMain.handle(
         PROJECT_IPC_CHANNELS.CREATE,
