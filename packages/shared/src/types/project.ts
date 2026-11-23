@@ -1,4 +1,3 @@
-
 export type ProjectType = 'personal' | 'commission'
 export type ProjectStatus = 'active' | 'paused' | 'completed'
 
