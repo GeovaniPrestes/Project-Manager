@@ -81,6 +81,31 @@ function Projects() {
         }
     }
 
+    async function handleDeleteProject(id: number, name: string) {
+        const confirmed = window.confirm(
+            `Tem certeza que deseja excluir o projeto "${name}"?`
+        )
+
+        if (!confirmed) {
+            return
+        }
+
+        try {
+            await window.projectApi.delete(id)
+
+            setProjects(current =>
+                current.filter(project => project.id !== id)
+            )
+
+            if (editingProject?.id === id) {
+                setEditingProject(null)
+                setShowForm(false)
+            }
+        } catch (error) {
+            console.error('Erro ao excluir projeto:', error)
+        }
+    }
+
     return (
         <div className="projects-page">
             <div className="projects-toolbar">
@@ -176,6 +201,9 @@ function Projects() {
                             onEdit={() => {
                                 setEditingProject(project)
                                 setShowForm(true)
+                            }}
+                            onDelete={() => {
+                                void handleDeleteProject(project.id, project.name)
                             }}
                         />
                     ))}

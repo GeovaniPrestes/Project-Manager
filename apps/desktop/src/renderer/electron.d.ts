@@ -54,6 +54,10 @@ declare global {
                 createdAt: Date
                 updatedAt: Date
             }>
+
+            delete: (id: number) => Promise<{
+                success: boolean
+            }>
         }
     }
 }

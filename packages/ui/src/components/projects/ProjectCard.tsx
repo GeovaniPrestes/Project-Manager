@@ -5,9 +5,10 @@ interface ProjectCardProps {
     color: string
     status: 'active' | 'paused' | 'completed'
     onEdit: () => void
+    onDelete: () => void
 }
 
-import { Pencil } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 
 const statusLabels = {
     active: 'Em andamento',
@@ -21,7 +22,8 @@ function ProjectCard({
     weeklyGoal,
     color,
     status,
-    onEdit
+    onEdit,
+    onDelete
 }: ProjectCardProps) {
     return (
         <article className="project-card">
@@ -50,6 +52,15 @@ function ProjectCard({
                             title="Editar projeto"
                         >
                             <Pencil size={16} />
+                        </button>
+                        <button
+                            type="button"
+                            className="project-card-delete"
+                            onClick={onDelete}
+                            aria-label={`Excluir ${name}`}
+                            title="Excluir projeto"
+                        >
+                            <Trash2 size={16} />
                         </button>
                     </div>
                 </div>

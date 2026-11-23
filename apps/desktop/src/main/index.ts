@@ -1,6 +1,6 @@
 
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { getProjects, createProject, updateProject } from './services/ProjectService.js'
+import { getProjects, createProject, updateProject, deleteProject } from './services/ProjectService.js'
 import { join } from 'node:path'
 
 import { database } from './database/index.js'
@@ -65,6 +65,9 @@ app.whenReady().then(async () => {
       return updateProject(id, data)
     })
 
+    ipcMain.handle('projects:delete', async (_event, id) => {
+      return deleteProject(id)
+    })
   } catch (error) {
     console.error('[Database] Falha ao inicializar o banco:', error)
     app.quit()

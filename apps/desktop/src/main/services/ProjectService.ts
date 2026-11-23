@@ -57,3 +57,15 @@ export async function updateProject(
 
     return project.toJSON()
 }
+
+export async function deleteProject(id: number) {
+    const project = await Project.findByPk(id)
+
+    if (!project) {
+        throw new Error(`Projeto com ID ${id} não encontrado.`)
+    }
+
+    await project.destroy()
+
+    return { success: true }
+}
