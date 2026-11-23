@@ -1,4 +1,5 @@
-import { useState } from 'react'
+
+import { useEffect, useState } from 'react'
 
 interface ProjectFormProps {
     entityLabel?: 'projeto' | 'comissão'
@@ -20,7 +21,12 @@ interface ProjectFormProps {
     }) => void
 }
 
-function ProjectForm({ entityLabel = 'projeto', initialData, onCancel, onSubmit }: ProjectFormProps) {
+function ProjectForm({
+    entityLabel = 'projeto',
+    initialData,
+    onCancel,
+    onSubmit
+}: ProjectFormProps) {
     const [name, setName] = useState(initialData?.name ?? '')
     const [description, setDescription] = useState(initialData?.description ?? '')
     const [category, setCategory] = useState(initialData?.category ?? '')
@@ -28,6 +34,14 @@ function ProjectForm({ entityLabel = 'projeto', initialData, onCancel, onSubmit 
     const [weeklyGoal, setWeeklyGoal] = useState(
         String(initialData?.weeklyGoal ?? 0)
     )
+
+    useEffect(() => {
+        setName(initialData?.name ?? '')
+        setDescription(initialData?.description ?? '')
+        setCategory(initialData?.category ?? '')
+        setColor(initialData?.color ?? '#6489ed')
+        setWeeklyGoal(String(initialData?.weeklyGoal ?? 0))
+    }, [initialData])
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -45,11 +59,19 @@ function ProjectForm({ entityLabel = 'projeto', initialData, onCancel, onSubmit 
         })
     }
 
+    const isEditing = Boolean(initialData)
+    const entityName = entityLabel === 'projeto' ? 'projeto' : 'comissão'
+
     return (
         <form className="project-form" onSubmit={handleSubmit}>
             <h2>
-                {entityLabel === 'projeto' ? 'Novo projeto' : 'Nova comissão'}
+                {isEditing
+                    ? `Editar ${entityName}`
+                    : entityLabel === 'projeto'
+                        ? 'Novo projeto'
+                        : 'Nova comissão'}
             </h2>
+
             <div className="project-form-field">
                 <label htmlFor="project-name">
                     Nome {entityLabel === 'projeto' ? 'do projeto' : 'da comissão'}
@@ -107,7 +129,7 @@ function ProjectForm({ entityLabel = 'projeto', initialData, onCancel, onSubmit 
                 </div>
 
                 <div className="project-form-field">
-                    <label htmlFor="project-color">Cor do projeto</label>
+                    <label htmlFor="project-color">Cor</label>
                     <input
                         id="project-color"
                         type="color"
@@ -123,7 +145,7 @@ function ProjectForm({ entityLabel = 'projeto', initialData, onCancel, onSubmit 
                 </button>
 
                 <button type="submit">
-                    {initialData ? 'Salvar alterações' : `Criar ${entityLabel}`}
+                    {isEditing ? 'Salvar alterações' : `Criar ${entityLabel}`}
                 </button>
             </div>
         </form>
