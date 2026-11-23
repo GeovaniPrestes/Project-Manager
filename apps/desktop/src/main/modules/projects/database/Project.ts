@@ -6,7 +6,7 @@ import {
     type CreationOptional
 } from 'sequelize'
 
-import { database } from '../../../database/index.js'
+import { database } from '../../../database/connection.js'
 
 class Project extends Model<
     InferAttributes<Project>,
