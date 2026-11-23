@@ -4,7 +4,7 @@ import { getProjects, createProject, updateProject, deleteProject, updateProject
 import { join } from 'node:path'
 
 import { database } from './database/index.js'
-import './database/models/index.js'
+import './database/models.js'
 
 const currentDir = import.meta.dirname
 
