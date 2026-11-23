@@ -1,6 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { ProjectApi } from '@project-manager/shared'
-import { PROJECT_IPC_CHANNELS } from '@project-manager/shared'
+
+import {
+    PROJECT_IPC_CHANNELS,
+    type ProjectApi
+} from '@project-manager/shared'
 
 contextBridge.exposeInMainWorld('appInfo', {
     platform: process.platform
