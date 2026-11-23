@@ -1,6 +1,14 @@
 import { useState } from 'react'
 
 interface ProjectFormProps {
+    initialData?: {
+        id: number
+        name: string
+        description: string | null
+        category: string | null
+        color: string
+        weeklyGoal: number
+    }
     onCancel: () => void
     onSubmit: (data: {
         name: string
@@ -11,12 +19,14 @@ interface ProjectFormProps {
     }) => void
 }
 
-function ProjectForm({ onCancel, onSubmit }: ProjectFormProps) {
-    const [name, setName] = useState('')
-    const [description, setDescription] = useState('')
-    const [category, setCategory] = useState('')
-    const [color, setColor] = useState('#6489ed')
-    const [weeklyGoal, setWeeklyGoal] = useState('0')
+function ProjectForm({ initialData, onCancel, onSubmit }: ProjectFormProps) {
+    const [name, setName] = useState(initialData?.name ?? '')
+    const [description, setDescription] = useState(initialData?.description ?? '')
+    const [category, setCategory] = useState(initialData?.category ?? '')
+    const [color, setColor] = useState(initialData?.color ?? '#6489ed')
+    const [weeklyGoal, setWeeklyGoal] = useState(
+        String(initialData?.weeklyGoal ?? 0)
+    )
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -103,7 +113,7 @@ function ProjectForm({ onCancel, onSubmit }: ProjectFormProps) {
                 </button>
 
                 <button type="submit">
-                    Criar projeto
+                    {initialData ? 'Salvar alterações' : 'Criar projeto'}
                 </button>
             </div>
         </form>

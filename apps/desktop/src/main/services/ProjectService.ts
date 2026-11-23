@@ -28,3 +28,32 @@ export async function createProject(data: CreateProjectData) {
 
     return project.toJSON()
 }
+
+interface UpdateProjectData {
+    name: string
+    description?: string | null
+    category?: string | null
+    color?: string
+    weeklyGoal?: number
+}
+
+export async function updateProject(
+    id: number,
+    data: UpdateProjectData
+) {
+    const project = await Project.findByPk(id)
+
+    if (!project) {
+        throw new Error(`Projeto com ID ${id} não encontrado.`)
+    }
+
+    await project.update({
+        name: data.name.trim(),
+        description: data.description?.trim() || null,
+        category: data.category?.trim() || null,
+        color: data.color ?? project.color,
+        weeklyGoal: data.weeklyGoal ?? project.weeklyGoal
+    })
+
+    return project.toJSON()
+}

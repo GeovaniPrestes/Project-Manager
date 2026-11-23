@@ -4,7 +4,10 @@ interface ProjectCardProps {
     weeklyGoal: number
     color: string
     status: 'active' | 'paused' | 'completed'
+    onEdit: () => void
 }
+
+import { Pencil } from 'lucide-react'
 
 const statusLabels = {
     active: 'Em andamento',
@@ -17,7 +20,8 @@ function ProjectCard({
     category,
     weeklyGoal,
     color,
-    status
+    status,
+    onEdit
 }: ProjectCardProps) {
     return (
         <article className="project-card">
@@ -33,9 +37,21 @@ function ProjectCard({
                         <span>{category}</span>
                     </div>
 
-                    <span className={`project-card-status ${status}`}>
-                        {statusLabels[status]}
-                    </span>
+                    <div className="project-card-actions">
+                        <span className={`project-card-status ${status}`}>
+                            {statusLabels[status]}
+                        </span>
+
+                        <button
+                            type="button"
+                            className="project-card-edit"
+                            onClick={onEdit}
+                            aria-label={`Editar ${name}`}
+                            title="Editar projeto"
+                        >
+                            <Pencil size={16} />
+                        </button>
+                    </div>
                 </div>
 
                 <div className="project-card-footer">

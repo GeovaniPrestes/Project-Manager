@@ -13,6 +13,7 @@ function Projects() {
     const [showForm, setShowForm] = useState(false)
     const [loading, setLoading] = useState(true)
     const [filter, setFilter] = useState<ProjectFilter>('all')
+    const [editingProject, setEditingProject] = useState<Project | null>(null)
 
     const filteredProjects = projects.filter(project => {
         if (filter === 'all') {
@@ -51,6 +52,32 @@ function Projects() {
             setShowForm(false)
         } catch (error) {
             console.error('Erro ao criar projeto:', error)
+        }
+    }
+
+    async function handleUpdateProject(
+        id: number,
+        data: {
+            name: string
+            description: string
+            category: string
+            color: string
+            weeklyGoal: number
+        }
+    ) {
+        try {
+            const updatedProject = await window.projectApi.update(id, data)
+
+            setProjects(current =>
+                current.map(project =>
+                    project.id === id ? updatedProject : project
+                )
+            )
+
+            setEditingProject(null)
+            setShowForm(false)
+        } catch (error) {
+            console.error('Erro ao atualizar projeto:', error)
         }
     }
 
@@ -118,8 +145,18 @@ function Projects() {
                     </div>
 
                     <ProjectForm
-                        onCancel={() => setShowForm(false)}
-                        onSubmit={handleCreateProject}
+                        initialData={editingProject ?? undefined}
+                        onCancel={() => {
+                            setShowForm(false)
+                            setEditingProject(null)
+                        }}
+                        onSubmit={data => {
+                            if (editingProject) {
+                                void handleUpdateProject(editingProject.id, data)
+                            } else {
+                                void handleCreateProject(data)
+                            }
+                        }}
                     />
                 </div>
             )}
@@ -136,6 +173,10 @@ function Projects() {
                             weeklyGoal={project.weeklyGoal}
                             color={project.color}
                             status={project.status}
+                            onEdit={() => {
+                                setEditingProject(project)
+                                setShowForm(true)
+                            }}
                         />
                     ))}
                 </div>

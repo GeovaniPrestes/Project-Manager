@@ -16,5 +16,8 @@ contextBridge.exposeInMainWorld('projectApi', {
     getAll: () => ipcRenderer.invoke('projects:get-all'),
 
     create: (data: CreateProjectData) =>
-        ipcRenderer.invoke('projects:create', data)
+        ipcRenderer.invoke('projects:create', data),
+
+    update: (id: number, data: CreateProjectData) =>
+        ipcRenderer.invoke('projects:update', id, data),
 })
