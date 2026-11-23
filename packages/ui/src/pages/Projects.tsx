@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FolderKanban, Plus, X } from 'lucide-react'
 
 import ProjectForm from '../components/projects/ProjectForm'
-import ProjectProgress from '../components/dashboard/ProjectProgress'
+import ProjectCard from '../components/projects/ProjectCard'
 import '../styles/projects.css'
 
 type Project = Awaited<ReturnType<typeof window.projectApi.getAll>>[number]
@@ -88,15 +88,15 @@ function Projects() {
             {loading ? (
                 <p>Carregando projetos...</p>
             ) : projects.length > 0 ? (
-                <div className="project-progress-list">
+                <div className="project-cards-grid">
                     {projects.map(project => (
-                        <ProjectProgress
+                        <ProjectCard
                             key={project.id}
                             name={project.name}
                             category={project.category ?? 'Sem categoria'}
-                            hours={`${project.weeklyGoal}h / semana`}
-                            progress={0}
+                            weeklyGoal={project.weeklyGoal}
                             color={project.color}
+                            status={project.status}
                         />
                     ))}
                 </div>

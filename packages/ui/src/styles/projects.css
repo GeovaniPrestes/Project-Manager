@@ -183,3 +183,110 @@
     background: var(--surface-color);
     color: var(--text-primary);
 }
+
+
+/* Project Cards */
+
+.project-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.project-card {
+    display: flex;
+    overflow: hidden;
+    min-width: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--surface-color);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.project-card:hover {
+    border-color: #6489ed;
+    transform: translateY(-2px);
+}
+
+.project-card-color {
+    width: 5px;
+    flex-shrink: 0;
+}
+
+.project-card-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+    padding: 18px;
+}
+
+.project-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.project-card-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.project-card-header h3 {
+    overflow: hidden;
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+}
+
+.project-card-header > div > span {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.project-card-status {
+    flex-shrink: 0;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.project-card-status.active {
+    background: rgba(69, 169, 133, 0.12);
+    color: #45a985;
+}
+
+.project-card-status.paused {
+    background: rgba(214, 155, 98, 0.12);
+    color: #d69b62;
+}
+
+.project-card-status.completed {
+    background: rgba(100, 137, 237, 0.12);
+    color: #6489ed;
+}
+
+.project-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-color);
+}
+
+.project-card-footer span {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.project-card-footer strong {
+    color: var(--text-primary);
+    font-size: 13px;
+}
