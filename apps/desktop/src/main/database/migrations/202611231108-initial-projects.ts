@@ -8,7 +8,34 @@ export const initialProjectsMigration: Migration = {
         const tableExists = await queryInterface.tableExists('projects')
 
         if (tableExists) {
-            console.info('[Migration] Tabela projects já existe. Preservando estrutura e dados.')
+            const columns = await queryInterface.describeTable('projects')
+
+            const requiredColumns = [
+                'id',
+                'name',
+                'description',
+                'category',
+                'color',
+                'weeklyGoal',
+                'status',
+                'createdAt',
+                'updatedAt'
+            ]
+
+            const missingColumns = requiredColumns.filter(
+                column => !(column in columns)
+            )
+
+            if (missingColumns.length > 0) {
+                throw new Error(
+                    `[Migration] Estrutura incompatível na tabela projects. Colunas ausentes: ${missingColumns.join(', ')}`
+                )
+            }
+
+            console.info(
+                '[Migration] Estrutura de projects validada. Dados preservados.'
+            )
+
             return
         }
 
@@ -45,7 +72,11 @@ export const initialProjectsMigration: Migration = {
                     defaultValue: 0
                 },
                 status: {
-                    type: DataTypes.STRING,
+                    type: DataTypes.ENUM(
+                        'active',
+                        'paused',
+                        'completed'
+                    ),
                     allowNull: false,
                     defaultValue: 'active'
                 },
