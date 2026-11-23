@@ -36,7 +36,29 @@ export async function initializeMigrationsTable(): Promise<void> {
     console.info('[Database] Tabela de migrations inicializada.')
 }
 
+function validateMigrations(): void {
+    const names = new Set<string>()
+
+    for (const migration of migrations) {
+        if (!migration.name.trim()) {
+            throw new Error(
+                '[Migration] Encontrada migration sem nome.'
+            )
+        }
+
+        if (names.has(migration.name)) {
+            throw new Error(
+                `[Migration] Nome duplicado: ${migration.name}`
+            )
+        }
+
+        names.add(migration.name)
+    }
+}
+
 export async function runMigrations(): Promise<void> {
+    validateMigrations()
+
     const queryInterface = database.getQueryInterface()
 
     const executedMigrations = await database.query<{ name: string }>(
@@ -53,21 +75,34 @@ export async function runMigrations(): Promise<void> {
             continue
         }
 
-        console.info(`[Database] Executando migration: ${migration.name}`)
+        console.info(
+            `[Database] Executando migration: ${migration.name}`
+        )
 
-        await database.transaction(async transaction => {
-            await migration.up(queryInterface, transaction)
+        try {
+            await database.transaction(async transaction => {
+                await migration.up(queryInterface, transaction)
 
-            await queryInterface.bulkInsert(
-                MIGRATIONS_TABLE,
-                [{
-                    name: migration.name,
-                    executedAt: new Date()
-                }],
-                { transaction }
+                await queryInterface.bulkInsert(
+                    MIGRATIONS_TABLE,
+                    [{
+                        name: migration.name,
+                        executedAt: new Date()
+                    }],
+                    { transaction }
+                )
+            })
+
+            console.info(
+                `[Database] Migration concluída: ${migration.name}`
             )
-        })
+        } catch (error) {
+            console.error(
+                `[Database] Falha ao executar migration: ${migration.name}`,
+                error
+            )
 
-        console.info(`[Database] Migration concluída: ${migration.name}`)
+            throw error
+        }
     }
 }

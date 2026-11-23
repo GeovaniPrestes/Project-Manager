@@ -6,13 +6,22 @@ import {
 } from './migrations/runner.js'
 
 export async function initializeDatabase(): Promise<void> {
-    registerModels()
+    try {
+        registerModels()
 
-    await database.authenticate()
-    console.info('[Database] Conexão estabelecida com sucesso.')
+        await database.authenticate()
+        console.info('[Database] Conexão estabelecida com sucesso.')
 
-    await initializeMigrationsTable()
-    await runMigrations()
+        await initializeMigrationsTable()
+        await runMigrations()
 
-    console.info('[Database] Migrations concluídas com sucesso.')
+        console.info('[Database] Migrations concluídas com sucesso.')
+    } catch (error) {
+        console.error(
+            '[Database] Falha durante a inicialização do banco:',
+            error
+        )
+
+        throw error
+    }
 }
