@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { FolderKanban, Plus, X } from 'lucide-react'
 
-import ProjectForm from '../components/projects/ProjectForm'
-import ProjectCard from '../components/projects/ProjectCard'
-import '../styles/projects.css'
+import ProjectCard from './components/ProjectCard'
+import ProjectForm from './components/ProjectForm'
+import '../styles/projects.css'             
 
 type Project = Awaited<ReturnType<typeof window.projectApi.getAll>>[number]
 type ProjectFilter = 'all' | 'active' | 'paused' | 'completed'
