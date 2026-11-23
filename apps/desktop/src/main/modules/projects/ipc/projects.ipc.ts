@@ -1,5 +1,4 @@
 import { ipcMain } from 'electron'
-
 import {
     getProjects,
     createProject,
@@ -7,25 +6,26 @@ import {
     deleteProject,
     updateProjectStatus
 } from '../services/ProjectService.js'
+import { PROJECT_IPC_CHANNELS } from '@project-manager/shared'
 
 export function registerProjectsIpc(): void {
-    ipcMain.handle('projects:get-all', async () => {
+    ipcMain.handle(PROJECT_IPC_CHANNELS.GET_ALL, async () => {
         return getProjects()
     })
 
-    ipcMain.handle('projects:create', async (_event, data) => {
+    ipcMain.handle(PROJECT_IPC_CHANNELS.CREATE, async (_event, data) => {
         return createProject(data)
     })
 
-    ipcMain.handle('projects:update', async (_event, id, data) => {
+    ipcMain.handle(PROJECT_IPC_CHANNELS.UPDATE, async (_event, id, data) => {
         return updateProject(id, data)
     })
 
-    ipcMain.handle('projects:delete', async (_event, id) => {
+    ipcMain.handle(PROJECT_IPC_CHANNELS.DELETE, async (_event, id) => {
         return deleteProject(id)
     })
 
-    ipcMain.handle('projects:update-status', async (_event, id, status) => {
+    ipcMain.handle(PROJECT_IPC_CHANNELS.UPDATE_STATUS, async (_event, id, status) => {
         return updateProjectStatus(id, status)
     })
 }
