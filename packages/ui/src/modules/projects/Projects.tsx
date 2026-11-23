@@ -3,7 +3,7 @@ import { FolderKanban, Plus, X } from 'lucide-react'
 
 import ProjectCard from './components/ProjectCard'
 import ProjectForm from './components/ProjectForm'
-import '../styles/projects.css'             
+import '../../app/styles/projects.css'
 
 type Project = Awaited<ReturnType<typeof window.projectApi.getAll>>[number]
 type ProjectFilter = 'all' | 'active' | 'paused' | 'completed'

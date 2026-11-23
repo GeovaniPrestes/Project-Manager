@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import AppLayout from '../layouts/AppLayout'
+import AppLayout from './AppLayout'
 import Dashboard from '../modules/dashboard/Dashboard'
 import Projects from '../modules/projects/Projects' 
 

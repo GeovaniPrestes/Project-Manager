@@ -11,12 +11,6 @@ interface ProjectCardProps {
 
 import { Pencil, Trash2 } from 'lucide-react'
 
-const statusLabels = {
-    active: 'Em andamento',
-    paused: 'Pausado',
-    completed: 'Concluído'
-}
-
 function ProjectCard({
     name,
     category,

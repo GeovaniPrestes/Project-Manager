@@ -1,9 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type {
-    CreateProjectData,
-    UpdateProjectData,
-    ProjectStatus
-} from '@project-manager/shared'
+import type { CreateProjectData } from '@project-manager/shared'
 
 contextBridge.exposeInMainWorld('appInfo', {
     platform: process.platform

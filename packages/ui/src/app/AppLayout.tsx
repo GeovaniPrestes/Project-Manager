@@ -10,7 +10,7 @@ import {
     Bell
 } from 'lucide-react'
 
-import '../styles/layout.css'
+import './styles/layout.css'
 
 interface AppLayoutProps {
     children: React.ReactNode

@@ -1,77 +1,19 @@
 
-import { app, BrowserWindow, ipcMain } from 'electron'
-import { getProjects, createProject, updateProject, deleteProject, updateProjectStatus } from './modules/projects/services/ProjectService.js'
-import { join } from 'node:path'
+import { app, BrowserWindow } from 'electron'
 
-import { database } from './database/connection.js'
-import './database/models.js'
-
-const currentDir = import.meta.dirname
-
-function createWindow(): void {
-  const mainWindow = new BrowserWindow({
-    width: 1440,
-    height: 900,
-    minWidth: 1000,
-    minHeight: 650,
-    show: false,
-    backgroundColor: '#111318',
-    webPreferences: {
-      preload: join(currentDir, '../preload/index.mjs'),
-      contextIsolation: true,
-      nodeIntegration: false,
-      sandbox: false
-    }
-  })
-
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show()
-  })
-
-  if (process.env.ELECTRON_RENDERER_URL) {
-    void mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
-  } else {
-    void mainWindow.loadFile(
-      join(currentDir, '../renderer/index.html')
-    )
-  }
-}
+import { registerIpcHandlers } from './core/ipc/index.js'
+import { createMainWindow } from './core/window.js'
+import { initializeDatabase } from './database/initialize.js'
 
 app.whenReady().then(async () => {
   try {
-    await database.authenticate()
-    console.info('[Database] Conexão estabelecida com sucesso.')
+    await initializeDatabase()
 
-    await database.sync()
-    console.info('[Database] Modelos sincronizados com sucesso.')
-
-    createWindow()
-
-    app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow()
-      }
-    })
-
-    ipcMain.handle('projects:get-all', async () => {
-      return getProjects()
-    })
-
-    ipcMain.handle('projects:create', async (_event, data) => {
-      return createProject(data)
-    })
-
-    ipcMain.handle('projects:update', async (_event, id, data) => {
-      return updateProject(id, data)
-    })
-
-    ipcMain.handle('projects:delete', async (_event, id) => {
-      return deleteProject(id)
-    })
-
-    ipcMain.handle('projects:update-status', async (_event, id, status) => {
-      return updateProjectStatus(id, status)
-    })
+    registerIpcHandlers()
+    
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createMainWindow()
+    }
   } catch (error) {
     console.error('[Database] Falha ao inicializar o banco:', error)
     app.quit()

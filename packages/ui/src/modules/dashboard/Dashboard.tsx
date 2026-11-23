@@ -9,7 +9,7 @@ import {
 
 import StatCard from './components/StatCard'
 import ProjectProgress from './components/ProjectProgress'
-import '../../styles/dashboard.css'
+import '../../app/styles/dashboard.css'
 
 type Project = Awaited<ReturnType<typeof window.projectApi.getAll>>[number]
 
