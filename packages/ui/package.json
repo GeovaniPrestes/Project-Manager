@@ -5,7 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/app/App.tsx",
-    "./styles/*": "./src/styles/*"
+    "./styles/*": "./src/app/styles/*"
   },
   "peerDependencies": {
     "react": "^19.3.1",

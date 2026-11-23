@@ -7,18 +7,20 @@ import {
     ChartColumn,
     Settings,
     Search,
-    Bell
+    Bell,
+    type LucideIcon
 } from 'lucide-react'
 
+import { type AppPage } from './Navigation'
 import './styles/layout.css'
 
 interface AppLayoutProps {
     children: React.ReactNode
     currentPage: string
-    onNavigate: (page: string) => void
+    onNavigate: (page: AppPage) => void
 }
 
-const navigation = [
+const navigation: { label: AppPage; icon: LucideIcon }[] = [
     { label: 'Dashboard', icon: LayoutDashboard },
     { label: 'Projetos', icon: FolderKanban },
     { label: 'Planejamento', icon: CalendarDays },

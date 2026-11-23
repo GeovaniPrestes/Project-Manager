@@ -2,19 +2,17 @@ import { useState } from 'react'
 
 import AppLayout from './AppLayout'
 import Dashboard from '../modules/dashboard/Dashboard'
-import Projects from '../modules/projects/Projects' 
+import Projects from '../modules/projects/Projects'
+import {
+  APP_PAGES,
+  PAGE_DESCRIPTIONS,
+  type AppPage
+} from './Navigation'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('Dashboard')
-
-  const pageDescriptions: Record<string, string> = {
-    Dashboard: 'Acompanhe seus projetos e atividades.',
-    Projetos: 'Gerencie e acompanhe seus projetos.',
-    Planejamento: 'Organize suas metas e atividades.',
-    Sessões: 'Acompanhe seu tempo de trabalho.',
-    Biblioteca: 'Organize seus materiais e referências.',
-    Relatórios: 'Analise seu desempenho e progresso.'
-  }
+  const [currentPage, setCurrentPage] = useState<AppPage>(
+    APP_PAGES.DASHBOARD
+  )
 
   return (
     <AppLayout
@@ -25,15 +23,13 @@ function App() {
         <div>
           <h1>{currentPage}</h1>
           <p>
-            {pageDescriptions[currentPage] ??
-              'Organize seu workspace.'}
+            {PAGE_DESCRIPTIONS[currentPage] ?? 'Organize seu workspace.'}
           </p>
         </div>
       </div>
 
-      {currentPage === 'Dashboard' && <Dashboard />}
-
-      {currentPage === 'Projetos' && <Projects />}
+      {currentPage === APP_PAGES.DASHBOARD && <Dashboard />}
+      {currentPage === APP_PAGES.PROJECTS && <Projects />}
     </AppLayout>
   )
 }
