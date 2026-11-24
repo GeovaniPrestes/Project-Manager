@@ -3,8 +3,10 @@ import { contextBridge, ipcRenderer } from 'electron'
 import {
     PROJECT_IPC_CHANNELS,
     TASK_IPC_CHANNELS,
+    TIMER_IPC_CHANNELS,
     type ProjectApi,
-    type TaskApi
+    type TaskApi,
+    type TimerApi
 } from '@project-manager/shared'
 
 contextBridge.exposeInMainWorld('appInfo', {
@@ -60,6 +62,39 @@ const taskApi: TaskApi = {
         ipcRenderer.invoke(TASK_IPC_CHANNELS.DELETE_CHECKLIST_ITEM, id)
 }
 
+const timerApi: TimerApi = {
+    getActive: () =>
+        ipcRenderer.invoke(TIMER_IPC_CHANNELS.GET_ACTIVE),
+
+    start: (data) =>
+        ipcRenderer.invoke(TIMER_IPC_CHANNELS.START, data),
+
+    pause: () =>
+        ipcRenderer.invoke(TIMER_IPC_CHANNELS.PAUSE),
+
+    resume: () =>
+        ipcRenderer.invoke(TIMER_IPC_CHANNELS.RESUME),
+
+    finish: () =>
+        ipcRenderer.invoke(TIMER_IPC_CHANNELS.FINISH),
+
+    cancel: () =>
+        ipcRenderer.invoke(TIMER_IPC_CHANNELS.CANCEL),
+
+    onUpdate: (callback) => {
+        const listener = (
+            _event: Electron.IpcRendererEvent,
+            session: Parameters<typeof callback>[0]
+        ) => callback(session)
+
+        ipcRenderer.on(TIMER_IPC_CHANNELS.UPDATE, listener)
+
+        return () => {
+            ipcRenderer.removeListener(TIMER_IPC_CHANNELS.UPDATE, listener)
+        }
+    }
+}
 
 contextBridge.exposeInMainWorld('projectApi', projectApi)
 contextBridge.exposeInMainWorld('taskApi', taskApi)
+contextBridge.exposeInMainWorld('timerApi', timerApi)

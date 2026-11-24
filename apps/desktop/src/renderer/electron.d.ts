@@ -1,6 +1,7 @@
 import type {
     ProjectApi,
-    TaskApi
+    TaskApi,
+    TimerApi
 } from '@project-manager/shared'
 
 export { }
@@ -13,5 +14,6 @@ declare global {
 
         projectApi: ProjectApi
         taskApi: TaskApi
+        timerApi: TimerApi
     }
 }
