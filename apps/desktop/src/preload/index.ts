@@ -42,8 +42,24 @@ const taskApi: TaskApi = {
         ipcRenderer.invoke(TASK_IPC_CHANNELS.DELETE, id),
 
     updateStatus: (id, status) =>
-        ipcRenderer.invoke(TASK_IPC_CHANNELS.UPDATE_STATUS, id, status)
+        ipcRenderer.invoke(TASK_IPC_CHANNELS.UPDATE_STATUS, id, status),
+
+    getChecklist: (taskId) =>
+        ipcRenderer.invoke(TASK_IPC_CHANNELS.GET_CHECKLIST, taskId),
+
+    createChecklistItem: (data) =>
+        ipcRenderer.invoke(TASK_IPC_CHANNELS.CREATE_CHECKLIST_ITEM, data),
+
+    updateChecklistItem: (id, data) =>
+        ipcRenderer.invoke(TASK_IPC_CHANNELS.UPDATE_CHECKLIST_ITEM, id, data),
+
+    toggleChecklistItem: (id) =>
+        ipcRenderer.invoke(TASK_IPC_CHANNELS.TOGGLE_CHECKLIST_ITEM, id),
+
+    deleteChecklistItem: (id) =>
+        ipcRenderer.invoke(TASK_IPC_CHANNELS.DELETE_CHECKLIST_ITEM, id)
 }
+
 
 contextBridge.exposeInMainWorld('projectApi', projectApi)
 contextBridge.exposeInMainWorld('taskApi', taskApi)

@@ -11,5 +11,11 @@ export const TASK_IPC_CHANNELS = {
     CREATE: 'tasks:create',
     UPDATE: 'tasks:update',
     DELETE: 'tasks:delete',
-    UPDATE_STATUS: 'tasks:update-status'
+    UPDATE_STATUS: 'tasks:update-status',
+
+    GET_CHECKLIST: 'tasks:get-checklist',
+    CREATE_CHECKLIST_ITEM: 'tasks:create-checklist-item',
+    UPDATE_CHECKLIST_ITEM: 'tasks:update-checklist-item',
+    TOGGLE_CHECKLIST_ITEM: 'tasks:toggle-checklist-item',
+    DELETE_CHECKLIST_ITEM: 'tasks:delete-checklist-item'
 } as const

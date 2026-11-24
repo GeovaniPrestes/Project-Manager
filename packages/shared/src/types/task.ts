@@ -35,3 +35,21 @@ export interface TaskData {
     createdAt: Date
     updatedAt: Date
 }
+
+export interface CreateChecklistItemData {
+    taskId: number
+    title: string
+}
+
+export interface UpdateChecklistItemData {
+    title: string
+}
+
+export interface ChecklistItemData {
+    id: number
+    taskId: number
+    title: string
+    completed: boolean
+    createdAt: Date
+    updatedAt: Date
+}

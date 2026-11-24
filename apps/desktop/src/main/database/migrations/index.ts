@@ -4,11 +4,13 @@ import { addProjectDeletedAtMigration } from './projects/202611231204-add-projec
 import { addProjectTypeMigration } from './projects/202611231340-add-project-type.js'
 import { initialTasksMigration } from './tasks/202611231420-initial-tasks.js'
 import { addTaskDeletedAtMigration } from './tasks/202611231457-add-task-deleted-at.js'
+import { createTaskChecklistItemsMigration } from './tasks/202611240100-create-task-checklist-items.js'
 
 export const migrations: Migration[] = [
     initialProjectsMigration,
     addProjectDeletedAtMigration,
     addProjectTypeMigration,
     initialTasksMigration,
-    addTaskDeletedAtMigration
+    addTaskDeletedAtMigration,
+    createTaskChecklistItemsMigration,
 ]

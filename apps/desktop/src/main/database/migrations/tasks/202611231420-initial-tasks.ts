@@ -1,4 +1,3 @@
-
 import { DataTypes } from 'sequelize'
 import type { Migration } from '../types.js'
 

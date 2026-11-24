@@ -1,4 +1,3 @@
-
 import { useEffect, useState, type DragEvent } from 'react'
 import {
     FolderKanban,
@@ -6,7 +5,8 @@ import {
     ListTodo,
     Plus,
     Pencil,
-    Trash2
+    Trash2,
+    ListChecks
 } from 'lucide-react'
 
 import type {
@@ -23,6 +23,10 @@ type Project = Awaited<
 
 type Task = Awaited<
     ReturnType<typeof window.taskApi.getAll>
+>[number]
+
+type ChecklistItem = Awaited<
+    ReturnType<typeof window.taskApi.getChecklist>
 >[number]
 
 type KanbanColumn = {
@@ -56,6 +60,13 @@ function Tasks() {
     const [dragOverColumn, setDragOverColumn] = useState<TaskStatus | null>(null)
     const [editingTask, setEditingTask] = useState<Task | null>(null)
     const [deletingTask, setDeletingTask] = useState(false)
+    const [checklists, setChecklists] = useState<
+        Record<number, ChecklistItem[]>
+    >({})
+    const [expandedChecklistTask, setExpandedChecklistTask] = useState<number | null>(null)
+    const [newChecklistItemTitle, setNewChecklistItemTitle] = useState('')
+    const [loadingChecklist, setLoadingChecklist] = useState(false)
+    const [savingChecklistItem, setSavingChecklistItem] = useState(false)
 
     const personalProjects = projects.filter(
         project => project.type === 'personal'
@@ -66,27 +77,88 @@ function Tasks() {
     )
 
     useEffect(() => {
-        async function loadProjects() {
+        let cancelled = false
+
+        const loadProjects = async () => {
             try {
                 const result = await window.projectApi.getAll()
 
-                const activeProjects = result.filter(
-                    project => project.status === 'active'
-                )
-
-                setProjects(activeProjects)
+                if (!cancelled) {
+                    setProjects(result)
+                }
             } catch (error) {
                 console.error('Erro ao carregar projetos:', error)
-                setError('Não foi possível carregar os projetos.')
-            } finally {
-                setLoading(false)
             }
         }
 
         void loadProjects()
+
+        return () => {
+            cancelled = true
+        }
     }, [])
 
     useEffect(() => {
+        let cancelled = false
+
+        async function loadTasks() {
+            if (!selectedProject) {
+                setTasks([])
+                setChecklists({})
+                setLoading(false)
+                return
+            }
+
+            setLoading(true)
+            setExpandedChecklistTask(null)
+            setNewChecklistItemTitle('')
+
+            try {
+                const result = await window.taskApi.getAll(selectedProject.id)
+
+                const checklistResults = await Promise.all(
+                    result.map(async task => {
+                        try {
+                            const items = await window.taskApi.getChecklist(task.id)
+                            return [task.id, items] as const
+                        } catch (error) {
+                            console.error(
+                                `Erro ao carregar checklist da tarefa ${task.id}:`,
+                                error
+                            )
+                            return [task.id, []] as const
+                        }
+                    })
+                )
+
+                if (!cancelled) {
+                    setTasks(result)
+                    setChecklists(Object.fromEntries(checklistResults))
+                }
+            } catch (error) {
+                console.error('Erro ao carregar tarefas:', error)
+
+                if (!cancelled) {
+                    setError('Não foi possível carregar as tarefas.')
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading(false)
+                }
+            }
+        }
+
+        void loadTasks()
+
+        return () => {
+            cancelled = true
+        }
+    }, [selectedProject?.id])
+
+    useEffect(() => {
+        setExpandedChecklistTask(null)
+        setNewChecklistItemTitle('')
+
         if (!selectedProject) {
             setTasks([])
             return
@@ -119,6 +191,92 @@ function Tasks() {
             cancelled = true
         }
     }, [selectedProject?.id])
+
+    const handleToggleChecklistItem = async (item: ChecklistItem) => {
+        try {
+            const updatedItem = await window.taskApi.toggleChecklistItem(item.id)
+
+            setChecklists(prev => ({
+                ...prev,
+                [item.taskId]: (prev[item.taskId] ?? []).map(current =>
+                    current.id === item.id ? updatedItem : current
+                )
+            }))
+        } catch (error) {
+            console.error('Erro ao atualizar item do checklist:', error)
+        }
+    }
+
+    const handleDeleteChecklistItem = async (item: ChecklistItem) => {
+        try {
+            await window.taskApi.deleteChecklistItem(item.id)
+
+            setChecklists(prev => ({
+                ...prev,
+                [item.taskId]: (prev[item.taskId] ?? []).filter(
+                    current => current.id !== item.id
+                )
+            }))
+        } catch (error) {
+            console.error('Erro ao excluir item do checklist:', error)
+        }
+    }
+
+    const handleCreateChecklistItem = async (taskId: number) => {
+        const title = newChecklistItemTitle.trim()
+
+        if (!title || savingChecklistItem) {
+            return
+        }
+
+        setSavingChecklistItem(true)
+
+        try {
+            const item = await window.taskApi.createChecklistItem({
+                taskId,
+                title
+            })
+
+            console.log('[Checklist Renderer] Item recebido:', item)
+console.log('[Checklist Renderer] Título recebido:', item.title)
+
+            setChecklists(prev => ({
+                ...prev,
+                [taskId]: [...(prev[taskId] ?? []), item]
+            }))
+
+            setNewChecklistItemTitle('')
+        } catch (error) {
+            console.error('Erro ao criar item do checklist:', error)
+        } finally {
+            setSavingChecklistItem(false)
+        }
+    }
+
+    const handleToggleChecklist = async (taskId: number) => {
+        if (expandedChecklistTask === taskId) {
+            setExpandedChecklistTask(null)
+            setNewChecklistItemTitle('')
+            return
+        }
+
+        setExpandedChecklistTask(taskId)
+        setNewChecklistItemTitle('')
+        setLoadingChecklist(true)
+
+        try {
+            const items = await window.taskApi.getChecklist(taskId)
+
+            setChecklists(prev => ({
+                ...prev,
+                [taskId]: items
+            }))
+        } catch (error) {
+            console.error('Erro ao carregar checklist:', error)
+        } finally {
+            setLoadingChecklist(false)
+        }
+    }
 
     async function handleCreateTask(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -544,6 +702,98 @@ function Tasks() {
                                                                 <span className="tasks-due-date">
                                                                     {new Date(task.dueDate).toLocaleDateString('pt-BR')}
                                                                 </span>
+                                                            )}
+                                                        </div>
+                                                        <div className="tasks-checklist">
+                                                            <button
+                                                                type="button"
+                                                                className="tasks-checklist-toggle"
+                                                                onClick={event => {
+                                                                    event.stopPropagation()
+                                                                    handleToggleChecklist(task.id)
+                                                                }}
+                                                                onMouseDown={event => event.stopPropagation()}
+                                                            >
+                                                                <ListChecks size={15} />
+
+                                                                <span>
+                                                                    Checklist
+                                                                    {' '}
+                                                                    ({(checklists[task.id] ?? []).filter(item => item.completed).length}
+                                                                    /
+                                                                    {(checklists[task.id] ?? []).length})
+                                                                </span>
+                                                            </button>
+
+                                                            {expandedChecklistTask === task.id && (
+                                                                <div
+                                                                    className="tasks-checklist-content"
+                                                                    onClick={event => event.stopPropagation()}
+                                                                    onMouseDown={event => event.stopPropagation()}
+                                                                >
+                                                                    {loadingChecklist ? (
+                                                                        <p>Carregando checklist...</p>
+                                                                    ) : (
+                                                                        <>
+                                                                            {(checklists[task.id] ?? []).map(item => (
+                                                                                <div
+                                                                                    key={item.id}
+                                                                                    className="tasks-checklist-item"
+                                                                                >
+                                                                                    <label className="tasks-checklist-item-label">
+                                                                                        <input
+                                                                                            type="checkbox"
+                                                                                            checked={item.completed}
+                                                                                            onChange={() =>
+                                                                                                handleToggleChecklistItem(item)
+                                                                                            }
+                                                                                        />
+
+                                                                                        <span className={item.completed ? 'completed' : ''}>
+                                                                                            {item.title || 'Item sem título'}
+                                                                                        </span>
+                                                                                    </label>
+
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() => handleDeleteChecklistItem(item)}
+                                                                                        title="Excluir item"
+                                                                                    >
+                                                                                        <Trash2 size={13} />
+                                                                                    </button>
+                                                                                </div>
+                                                                            ))}
+
+                                                                            <form
+                                                                                className="tasks-checklist-form"
+                                                                                onSubmit={event => {
+                                                                                    event.preventDefault()
+                                                                                    handleCreateChecklistItem(task.id)
+                                                                                }}
+                                                                            >
+                                                                                <input
+                                                                                    type="text"
+                                                                                    value={newChecklistItemTitle}
+                                                                                    onChange={event =>
+                                                                                        setNewChecklistItemTitle(event.target.value)
+                                                                                    }
+                                                                                    placeholder="Novo item..."
+                                                                                />
+
+                                                                                <button
+                                                                                    type="submit"
+                                                                                    disabled={
+                                                                                        !newChecklistItemTitle.trim() ||
+                                                                                        savingChecklistItem
+                                                                                    }
+                                                                                    title="Adicionar item"
+                                                                                >
+                                                                                    <Plus size={15} />
+                                                                                </button>
+                                                                            </form>
+                                                                        </>
+                                                                    )}
+                                                                </div>
                                                             )}
                                                         </div>
                                                     </div>
