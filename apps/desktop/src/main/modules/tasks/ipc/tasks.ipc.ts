@@ -98,8 +98,6 @@ export function registerTasksIpc(): void {
 
             const result = await ChecklistService.create(data)
 
-            console.log('[Checklist IPC] Item criado:', result.toJSON())
-
             return result
         }
     )
