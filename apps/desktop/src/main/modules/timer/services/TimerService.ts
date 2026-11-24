@@ -2,12 +2,161 @@ import TimerSession from '../database/TimerSession.js'
 import Project from '../../projects/database/Project.js'
 import Task from '../../tasks/database/Task.js'
 
+import {
+    TIMER_IPC_CHANNELS
+} from '@project-manager/shared'
+
+import { getMainWindow } from '../../../core/window.js'
+
 import type {
     CreateTimerSessionData
 } from '@project-manager/shared'
 
+let timerInterval: ReturnType<typeof setInterval> | null = null
+let isTicking = false
+let tickPromise: Promise<void> | null = null
+
 const FOCUS_DURATION_SECONDS = 50 * 60
 const BREAK_DURATION_SECONDS = 10 * 60
+
+function notifyTimerUpdate(session: TimerSession): void {
+    const window = getMainWindow()
+
+    if (!window || window.isDestroyed()) {
+        return
+    }
+
+    window.webContents.send(
+        TIMER_IPC_CHANNELS.UPDATE,
+        session.toJSON()
+    )
+}
+
+export async function pauseTimerOnShutdown(): Promise<void> {
+    await stopTimerAndWaitForTick()
+
+    const session = await TimerSession.findOne({
+        where: { status: 'running' },
+        order: [['createdAt', 'DESC']]
+    })
+
+    if (!session) {
+        return
+    }
+
+    await session.update({
+        status: 'paused'
+    })
+
+    notifyTimerUpdate(session)
+
+    console.info('[Timer] Sessão pausada durante o encerramento.')
+}
+
+export async function recoverInterruptedTimerSession(): Promise<void> {
+    const session = await TimerSession.findOne({
+        where: { status: 'running' },
+        order: [['createdAt', 'DESC']]
+    })
+
+    if (!session) {
+        return
+    }
+
+    await session.update({
+        status: 'paused'
+    })
+
+    console.info(
+        '[Timer] Sessão interrompida recuperada e pausada.',
+        { sessionId: session.id }
+    )
+}
+
+async function tickTimer(): Promise<void> {
+    if (isTicking) {
+        return
+    }
+
+    isTicking = true
+
+    try {
+        const session = await TimerSession.findOne({
+            where: { status: 'running' },
+            order: [['createdAt', 'DESC']]
+        })
+
+        if (!session) {
+            stopTimerInterval()
+            return
+        }
+
+        const remainingSeconds = Math.max(
+            session.remainingSeconds - 1,
+            0
+        )
+
+        const workedSeconds =
+            session.workedSeconds +
+            (session.phase === 'focus' ? 1 : 0)
+
+        let phase = session.phase
+        let nextRemainingSeconds = remainingSeconds
+
+        if (remainingSeconds === 0) {
+            if (session.phase === 'focus') {
+                phase = 'break'
+                nextRemainingSeconds = session.breakDurationSeconds
+            } else {
+                phase = 'focus'
+                nextRemainingSeconds = session.focusDurationSeconds
+            }
+        }
+
+        await session.update({
+            phase,
+            remainingSeconds: nextRemainingSeconds,
+            workedSeconds
+        })
+
+        notifyTimerUpdate(session)
+    } catch (error) {
+        console.error('[Timer] Erro na contagem regressiva:', error)
+    } finally {
+        isTicking = false
+    }
+}
+
+function startTimerInterval(): void {
+    if (timerInterval) {
+        return
+    }
+
+    timerInterval = setInterval(() => {
+        if (tickPromise) {
+            return
+        }
+
+        tickPromise = tickTimer().finally(() => {
+            tickPromise = null
+        })
+    }, 1000)
+}
+
+function stopTimerInterval(): void {
+    if (timerInterval) {
+        clearInterval(timerInterval)
+        timerInterval = null
+    }
+}
+
+async function stopTimerAndWaitForTick(): Promise<void> {
+    stopTimerInterval()
+
+    if (tickPromise) {
+        await tickPromise
+    }
+}
 
 export async function getActiveTimerSession() {
     const session = await TimerSession.findOne({
@@ -72,6 +221,9 @@ export async function startTimerSession(data: CreateTimerSessionData) {
         endedAt: null
     })
 
+    notifyTimerUpdate(session)
+    startTimerInterval()
+
     return session.toJSON()
 }
 
@@ -91,9 +243,13 @@ export async function pauseTimerSession() {
         throw new Error('Não existe uma sessão em andamento.')
     }
 
+    await stopTimerAndWaitForTick()
+
     await session.update({
         status: 'paused'
     })
+
+    notifyTimerUpdate(session)
 
     return session.toJSON()
 }
@@ -112,6 +268,9 @@ export async function resumeTimerSession() {
         status: 'running'
     })
 
+    notifyTimerUpdate(session)
+    startTimerInterval()
+
     return session.toJSON()
 }
 
@@ -127,10 +286,15 @@ export async function finishTimerSession() {
         throw new Error('Não existe uma sessão ativa para finalizar.')
     }
 
+    await stopTimerAndWaitForTick()
+
     await session.update({
         status: 'completed',
         endedAt: new Date()
     })
+
+
+    notifyTimerUpdate(session)
 
     return session.toJSON()
 }
@@ -147,6 +311,8 @@ export async function cancelTimerSession() {
         throw new Error('Não existe uma sessão ativa para cancelar.')
     }
 
+    await stopTimerAndWaitForTick()
+
     await session.update({
         status: 'cancelled',
         endedAt: new Date()
@@ -154,3 +320,4 @@ export async function cancelTimerSession() {
 
     return { success: true }
 }
+

@@ -1,10 +1,16 @@
 import { BrowserWindow } from 'electron'
 import { join } from 'node:path'
 
+let mainWindow: BrowserWindow | null = null
+
+export function getMainWindow(): BrowserWindow | null {
+    return mainWindow
+}
+
 export function createMainWindow(): void {
     const currentDir = import.meta.dirname
 
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 1440,
         height: 900,
         minWidth: 1000,
@@ -20,6 +26,8 @@ export function createMainWindow(): void {
     })
 
     mainWindow.once('ready-to-show', () => {
+        if(mainWindow == null) return
+        
         mainWindow.show()
     })
 
