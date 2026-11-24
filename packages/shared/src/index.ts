@@ -8,8 +8,8 @@ export type { TaskApi } from './contracts/task.js'
 export * from './types/timer.js'
 export type { TimerApi } from './contracts/timer.js'
 
-
 export {
     PROJECT_IPC_CHANNELS,
-    TASK_IPC_CHANNELS
+    TASK_IPC_CHANNELS,
+    TIMER_IPC_CHANNELS
 } from './constants/ipc.js'
