@@ -114,3 +114,43 @@ export async function resumeTimerSession() {
 
     return session.toJSON()
 }
+
+export async function finishTimerSession() {
+    const session = await TimerSession.findOne({
+        where: {
+            status: ['running', 'paused']
+        },
+        order: [['createdAt', 'DESC']]
+    })
+
+    if (!session) {
+        throw new Error('Não existe uma sessão ativa para finalizar.')
+    }
+
+    await session.update({
+        status: 'completed',
+        endedAt: new Date()
+    })
+
+    return session.toJSON()
+}
+
+export async function cancelTimerSession() {
+    const session = await TimerSession.findOne({
+        where: {
+            status: ['running', 'paused']
+        },
+        order: [['createdAt', 'DESC']]
+    })
+
+    if (!session) {
+        throw new Error('Não existe uma sessão ativa para cancelar.')
+    }
+
+    await session.update({
+        status: 'cancelled',
+        endedAt: new Date()
+    })
+
+    return { success: true }
+}
