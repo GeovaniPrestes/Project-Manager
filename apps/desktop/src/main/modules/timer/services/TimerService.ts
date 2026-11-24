@@ -80,3 +80,37 @@ function validateId(id: number): void {
         throw new Error('Identificador inválido.')
     }
 }
+
+export async function pauseTimerSession() {
+    const session = await TimerSession.findOne({
+        where: { status: 'running' },
+        order: [['createdAt', 'DESC']]
+    })
+
+    if (!session) {
+        throw new Error('Não existe uma sessão em andamento.')
+    }
+
+    await session.update({
+        status: 'paused'
+    })
+
+    return session.toJSON()
+}
+
+export async function resumeTimerSession() {
+    const session = await TimerSession.findOne({
+        where: { status: 'paused' },
+        order: [['createdAt', 'DESC']]
+    })
+
+    if (!session) {
+        throw new Error('Não existe uma sessão pausada.')
+    }
+
+    await session.update({
+        status: 'running'
+    })
+
+    return session.toJSON()
+}
