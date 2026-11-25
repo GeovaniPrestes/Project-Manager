@@ -19,6 +19,23 @@ let tickPromise: Promise<void> | null = null
 const FOCUS_DURATION_SECONDS = 50 * 60
 const BREAK_DURATION_SECONDS = 10 * 60
 
+function validateCommissionStartTime(): void {
+    const now = new Date()
+
+    const day = now.getDay()
+    const minutes = now.getHours() * 60 + now.getMinutes()
+
+    const isWeekday = day >= 1 && day <= 5
+    const isWithinWorkingHours =
+        minutes >= 8 * 60 && minutes < 18 * 60
+
+    if (!isWeekday || !isWithinWorkingHours) {
+        throw new Error(
+            'Projetos de comissão só podem iniciar de segunda a sexta-feira, das 08:00 às 18:00.'
+        )
+    }
+}
+
 function notifyTimerUpdate(session: TimerSession): void {
     const window = getMainWindow()
 
@@ -192,6 +209,10 @@ export async function startTimerSession(data: CreateTimerSessionData) {
 
     if (project.status !== 'active') {
         throw new Error('Não é possível iniciar o Timer em um projeto inativo.')
+    }
+
+    if (project.type === 'commission') {
+        validateCommissionStartTime()
     }
 
     if (data.taskId !== undefined && data.taskId !== null) {
