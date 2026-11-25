@@ -6,6 +6,7 @@ import { initialTasksMigration } from './tasks/202611231420-initial-tasks.js'
 import { addTaskDeletedAtMigration } from './tasks/202611231457-add-task-deleted-at.js'
 import { createTaskChecklistItemsMigration } from './tasks/202611240100-create-task-checklist-items.js'
 import { createTimerSessionsMigration } from './timer/202611232235-create-timer-sessions.js'
+import { addTimerSessionStatusCreatedAtIndexMigration } from './timer/202611251030-add-timer-session-status-created-at-index.js'
 
 export const migrations: Migration[] = [
     initialProjectsMigration,
@@ -15,4 +16,5 @@ export const migrations: Migration[] = [
     addTaskDeletedAtMigration,
     createTaskChecklistItemsMigration,
     createTimerSessionsMigration,
+    addTimerSessionStatusCreatedAtIndexMigration,
 ]
