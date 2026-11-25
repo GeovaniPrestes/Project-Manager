@@ -255,6 +255,8 @@ function validateId(id: number): void {
 }
 
 export async function pauseTimerSession() {
+    await stopTimerAndWaitForTick()
+
     const session = await TimerSession.findOne({
         where: { status: 'running' },
         order: [['createdAt', 'DESC']]
@@ -263,8 +265,6 @@ export async function pauseTimerSession() {
     if (!session) {
         throw new Error('Não existe uma sessão em andamento.')
     }
-
-    await stopTimerAndWaitForTick()
 
     await session.update({
         status: 'paused'
@@ -296,6 +296,8 @@ export async function resumeTimerSession() {
 }
 
 export async function finishTimerSession() {
+    await stopTimerAndWaitForTick()
+
     const session = await TimerSession.findOne({
         where: {
             status: ['running', 'paused']
@@ -307,13 +309,10 @@ export async function finishTimerSession() {
         throw new Error('Não existe uma sessão ativa para finalizar.')
     }
 
-    await stopTimerAndWaitForTick()
-
     await session.update({
         status: 'completed',
         endedAt: new Date()
     })
-
 
     notifyTimerUpdate(session)
 
@@ -321,6 +320,8 @@ export async function finishTimerSession() {
 }
 
 export async function cancelTimerSession() {
+    await stopTimerAndWaitForTick()
+
     const session = await TimerSession.findOne({
         where: {
             status: ['running', 'paused']
@@ -332,13 +333,12 @@ export async function cancelTimerSession() {
         throw new Error('Não existe uma sessão ativa para cancelar.')
     }
 
-    await stopTimerAndWaitForTick()
-
     await session.update({
         status: 'cancelled',
         endedAt: new Date()
     })
 
+    notifyTimerUpdate(session)
+
     return { success: true }
 }
-

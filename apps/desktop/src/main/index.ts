@@ -1,4 +1,3 @@
-
 import { app, BrowserWindow } from 'electron'
 
 import { registerIpcHandlers } from './core/ipc/index.js'
